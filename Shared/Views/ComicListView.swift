@@ -20,24 +20,36 @@ struct ComicListView: View {
         }
         else {
             NavigationView {
-                List {
-                    ForEach((1...comicListModelView.latestComicNum!).reversed(), id: \.self) { comicNum in
-                        NavigationLink {
-                            ComicFullscreenView(comicNum: comicNum)
-                        } label: {
-                            ComicListRowView(comicNum: comicNum)
+                VStack{
+                    HStack {
+                        Spacer()
+                        
+                        Text("XKCD")
+                            .font(.title)
+                            .bold()
+                        
+                        Spacer()
+                    }
+                        
+                    List {
+                        ForEach((1...comicListModelView.latestComicNum!).reversed(), id: \.self) { comicNum in
+                            NavigationLink {
+                                ComicFullscreenView(comicNum: comicNum)
+                            } label: {
+                                ComicListRowView(comicNum: comicNum)
+                            }
                         }
                     }
                 }
                 .navigationTitle("Comics")
                 .navigationBarHidden(true)
             }
-            .edgesIgnoringSafeArea(.horizontal)
         }
     }
 }
 
 struct ComicListRowView: View {
+    @StateObject var comicMetadataModelView: ComicMetadataModelView = ComicMetadataModelView()
     var comicNum: Int
     
     var body: some View {
@@ -45,11 +57,24 @@ struct ComicListRowView: View {
             ComicImageView(comicNum: comicNum)
                 .frame(width: 70, height: 70)
             
-            Spacer()
+            if comicMetadataModelView.comicMetadata == nil {
+                // Only center when displaying just the number
+                Spacer()
             
-            Text(comicNum.description)
-                .font(.title)
-                .bold()
+                Text(comicNum.description)
+                    .font(.title3)
+                    .bold()
+                    .task {
+                        await comicMetadataModelView.load(comicNum)
+                    }
+            }
+            else {
+                withAnimation {
+                    Text("\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title!)")
+                        .font(.title3)
+                        .bold()
+                }
+            }
             
             Spacer()
         }

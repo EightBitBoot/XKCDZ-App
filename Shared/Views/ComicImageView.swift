@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ComicImageView: View {
     var comicNum: Int
-    @StateObject private var comicModelView: ComicModelView = ComicModelView()
+    @StateObject private var comicModelView: ComicImageModelView = ComicImageModelView()
     
     var body: some View {
         Group {

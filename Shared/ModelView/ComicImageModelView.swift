@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 
-class ComicModelView: ObservableObject {
+class ComicImageModelView: ObservableObject {
     @Published public private(set) var image: Image? = nil
     @Published public private(set) var errorLoading: Bool = false
     

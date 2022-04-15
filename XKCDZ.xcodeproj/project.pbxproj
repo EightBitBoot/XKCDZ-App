@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		C6173A40280737AE005F6E06 /* ComicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A3F280737AE005F6E06 /* ComicListView.swift */; };
 		C6173A41280737AE005F6E06 /* ComicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A3F280737AE005F6E06 /* ComicListView.swift */; };
-		C6173A43280758D7005F6E06 /* ComicModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A42280758D7005F6E06 /* ComicModelView.swift */; };
-		C6173A44280758D7005F6E06 /* ComicModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A42280758D7005F6E06 /* ComicModelView.swift */; };
+		C6173A43280758D7005F6E06 /* ComicImageModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A42280758D7005F6E06 /* ComicImageModelView.swift */; };
+		C6173A44280758D7005F6E06 /* ComicImageModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A42280758D7005F6E06 /* ComicImageModelView.swift */; };
 		C6173A4628076BCF005F6E06 /* ComicLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A4528076BCF005F6E06 /* ComicLoader.swift */; };
 		C6173A4728076BCF005F6E06 /* ComicLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A4528076BCF005F6E06 /* ComicLoader.swift */; };
 		C6173A4928076CDD005F6E06 /* ComicListModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A4828076CDD005F6E06 /* ComicListModelView.swift */; };
 		C6173A4A28076CDD005F6E06 /* ComicListModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A4828076CDD005F6E06 /* ComicListModelView.swift */; };
+		C6AC10B528096686003A4FD2 /* ComicMetadataModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6AC10B428096686003A4FD2 /* ComicMetadataModelView.swift */; };
+		C6AC10B628096686003A4FD2 /* ComicMetadataModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6AC10B428096686003A4FD2 /* ComicMetadataModelView.swift */; };
 		C6CA24202807869800F1414E /* ComicFullscreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CA241F2807869800F1414E /* ComicFullscreenView.swift */; };
 		C6CA24212807869800F1414E /* ComicFullscreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CA241F2807869800F1414E /* ComicFullscreenView.swift */; };
 		C6CA24232807982D00F1414E /* ComicStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CA24222807982D00F1414E /* ComicStore.swift */; };
@@ -58,9 +60,10 @@
 
 /* Begin PBXFileReference section */
 		C6173A3F280737AE005F6E06 /* ComicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicListView.swift; sourceTree = "<group>"; };
-		C6173A42280758D7005F6E06 /* ComicModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicModelView.swift; sourceTree = "<group>"; };
+		C6173A42280758D7005F6E06 /* ComicImageModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicImageModelView.swift; sourceTree = "<group>"; };
 		C6173A4528076BCF005F6E06 /* ComicLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicLoader.swift; sourceTree = "<group>"; };
 		C6173A4828076CDD005F6E06 /* ComicListModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicListModelView.swift; sourceTree = "<group>"; };
+		C6AC10B428096686003A4FD2 /* ComicMetadataModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicMetadataModelView.swift; sourceTree = "<group>"; };
 		C6CA241F2807869800F1414E /* ComicFullscreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicFullscreenView.swift; sourceTree = "<group>"; };
 		C6CA24222807982D00F1414E /* ComicStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicStore.swift; sourceTree = "<group>"; };
 		C6D0331928062E6400E0EAB2 /* XKCDZApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XKCDZApp.swift; sourceTree = "<group>"; };
@@ -207,8 +210,9 @@
 		C6E626462808C04E0079CE62 /* ModelView */ = {
 			isa = PBXGroup;
 			children = (
-				C6173A42280758D7005F6E06 /* ComicModelView.swift */,
+				C6173A42280758D7005F6E06 /* ComicImageModelView.swift */,
 				C6173A4828076CDD005F6E06 /* ComicListModelView.swift */,
+				C6AC10B428096686003A4FD2 /* ComicMetadataModelView.swift */,
 			);
 			path = ModelView;
 			sourceTree = "<group>";
@@ -376,6 +380,7 @@
 				C6D033682806332200E0EAB2 /* XKCDComic.swift in Sources */,
 				C6D0335D2806306400E0EAB2 /* ComicImageView.swift in Sources */,
 				C6173A40280737AE005F6E06 /* ComicListView.swift in Sources */,
+				C6AC10B528096686003A4FD2 /* ComicMetadataModelView.swift in Sources */,
 				C6CA24202807869800F1414E /* ComicFullscreenView.swift in Sources */,
 				C6CA24232807982D00F1414E /* ComicStore.swift in Sources */,
 				C6173A4628076BCF005F6E06 /* ComicLoader.swift in Sources */,
@@ -383,7 +388,7 @@
 				C6173A4928076CDD005F6E06 /* ComicListModelView.swift in Sources */,
 				C6E6272028093E540079CE62 /* PersistanceProvider.swift in Sources */,
 				C6E6271D280936490079CE62 /* xkcdz.xcdatamodeld in Sources */,
-				C6173A43280758D7005F6E06 /* ComicModelView.swift in Sources */,
+				C6173A43280758D7005F6E06 /* ComicImageModelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +399,7 @@
 				C6D033692806332200E0EAB2 /* XKCDComic.swift in Sources */,
 				C6D0335E2806306400E0EAB2 /* ComicImageView.swift in Sources */,
 				C6173A41280737AE005F6E06 /* ComicListView.swift in Sources */,
+				C6AC10B628096686003A4FD2 /* ComicMetadataModelView.swift in Sources */,
 				C6CA24212807869800F1414E /* ComicFullscreenView.swift in Sources */,
 				C6CA24242807982D00F1414E /* ComicStore.swift in Sources */,
 				C6173A4728076BCF005F6E06 /* ComicLoader.swift in Sources */,
@@ -401,7 +407,7 @@
 				C6173A4A28076CDD005F6E06 /* ComicListModelView.swift in Sources */,
 				C6E6272128093E540079CE62 /* PersistanceProvider.swift in Sources */,
 				C6E6271E280936490079CE62 /* xkcdz.xcdatamodeld in Sources */,
-				C6173A44280758D7005F6E06 /* ComicModelView.swift in Sources */,
+				C6173A44280758D7005F6E06 /* ComicImageModelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
