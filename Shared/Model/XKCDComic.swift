@@ -10,13 +10,8 @@ import SwiftUI
 
 let XKCD_BASE_URL = "https://xkcd.com/"
 
-struct Comic {
-    let metadata: ComicMetadata
-    var image: Image
-}
-
 // TODO(Adin): Decode day, month & year as Ints
-struct ComicMetadata: Codable {
+struct JsonComicMetadata: Codable {
     let num: Int
     let img: String
     let safe_title: String

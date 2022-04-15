@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct XKCDZApp: App {
+    var comicStore: ComicStore = ComicStore()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ComicListView()
         }
     }
 }

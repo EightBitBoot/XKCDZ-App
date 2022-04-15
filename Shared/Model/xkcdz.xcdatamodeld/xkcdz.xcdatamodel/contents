@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ComicImage" representedClassName="ComicImage" syncable="YES" codeGenerationType="class">
+        <attribute name="data" optional="YES" attributeType="Binary"/>
+        <attribute name="num" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="comicMetadata" maxCount="1" deletionRule="Nullify" destinationEntity="ComicMetadata" inverseName="comicImage" inverseEntity="ComicMetadata"/>
+    </entity>
+    <entity name="ComicMetadata" representedClassName="ComicMetadata" syncable="YES" codeGenerationType="class">
+        <attribute name="alt" attributeType="String"/>
+        <attribute name="day" attributeType="String"/>
+        <attribute name="img" attributeType="String"/>
+        <attribute name="link" attributeType="String"/>
+        <attribute name="month" attributeType="String"/>
+        <attribute name="news" attributeType="String"/>
+        <attribute name="num" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="safe_title" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="transcript" attributeType="String"/>
+        <attribute name="year" attributeType="String"/>
+        <relationship name="comicImage" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ComicImage" inverseName="comicMetadata" inverseEntity="ComicImage"/>
+    </entity>
+    <elements>
+        <element name="ComicMetadata" positionX="-63" positionY="-18" width="128" height="209"/>
+        <element name="ComicImage" positionX="-54" positionY="90" width="128" height="14"/>
+    </elements>
+</model>
