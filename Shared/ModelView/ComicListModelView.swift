@@ -33,5 +33,6 @@ class ComicListModelView: ObservableObject {
     
     func refresh() async {
         await ComicStore.refreshComicStore()
+        await loadLatestComicNum()
     }
 }

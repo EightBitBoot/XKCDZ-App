@@ -40,6 +40,9 @@ struct ComicListView: View {
                             }
                         }
                     }
+                    .refreshable {
+                        await comicListModelView.refresh()
+                    }
                 }
                 .navigationTitle("Comics")
                 .navigationBarHidden(true)
