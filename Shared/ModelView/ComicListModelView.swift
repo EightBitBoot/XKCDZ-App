@@ -13,7 +13,7 @@ class ComicListModelView: ObservableObject {
     
     @MainActor
     func loadLatestComicNum() async {
-        if let latestComicMetadata = ComicStore.getLatestStoredMetadata() {
+        if let latestComicMetadata = await ComicStore.getLatestStoredMetadata() {
             latestComicNum = Int(latestComicMetadata.num)
         }
         else {
@@ -21,7 +21,7 @@ class ComicListModelView: ObservableObject {
             
             await ComicStore.refreshComicStore()
             // TODO(Adin): This nested if is ugly: fix it
-            if let newLatestComicMetadata = ComicStore.getLatestStoredMetadata() {
+            if let newLatestComicMetadata = await ComicStore.getLatestStoredMetadata() {
                 latestComicNum = Int(newLatestComicMetadata.num)
             }
             else {

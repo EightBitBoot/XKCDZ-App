@@ -70,7 +70,7 @@ struct ComicListRowView: View {
             }
             else {
                 withAnimation {
-                    Text("\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title!)")
+                    Text("\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title)")
                         .font(.title3)
                         .bold()
                 }

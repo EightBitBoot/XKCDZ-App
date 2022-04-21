@@ -18,8 +18,8 @@ class ComicImageModelView: ObservableObject {
         // TODO(Adin): Clean up error handling
         // TODO(Adin): Check comic cache first
         
-        if let loadedImageData = await ComicStore.getImage(comicNum), let uiImage = UIImage(data: loadedImageData.data!) {
-            image = Image(uiImage: uiImage)
+        if let loadedImage = await ComicStore.getImageData(comicNum) {
+            image = loadedImage
         }
         else {
             errorLoading = true

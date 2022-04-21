@@ -13,8 +13,8 @@ struct ComicFullscreenView: View {
     var comicNum: Int
     
     var body: some View {
-        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? comicNum.description : "\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title!)"
-        let altText: String = comicMetadataModelView.comicMetadata == nil ? "Loading alt text..." : comicMetadataModelView.comicMetadata!.alt!
+        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? comicNum.description : "\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title)"
+        let altText: String = comicMetadataModelView.comicMetadata == nil ? "Loading alt text..." : comicMetadataModelView.comicMetadata!.alt
         
         ComicImageView(comicNum: comicNum)
             .navigationTitle(navigationTitle)

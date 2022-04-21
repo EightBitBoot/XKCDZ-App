@@ -15,6 +15,10 @@ enum ComicLoaderError: Error {
 }
 
 struct ComicLoader {
+    // This is an organizational struct with static functions
+    // so prevent instantiation
+    private init() {}
+    
     private static func httpGetRequest(_ address: String) async throws -> (Data, HTTPURLResponse) {
         guard let url: URL = URL(string: address)
         else {

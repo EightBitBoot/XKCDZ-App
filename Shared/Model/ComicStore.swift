@@ -6,15 +6,61 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum FileFormat: String {
     case JPEG = ".jpg"
     case PNG = ".png"
 }
 
+class CacheKey: NSObject {
+    let num: Int
+    
+    init(num: Int) {
+        self.num = num
+    }
+    
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? CacheKey
+        else {
+            return false
+        }
+        
+        return num == other.num
+    }
+    
+    override var hash: Int {
+        num.hashValue
+    }
+}
+
+class CacheSafeComicMetadata {
+    let comicMetadata: SafeComicMetadata
+    
+    init(comicMetadata: SafeComicMetadata) {
+        self.comicMetadata = comicMetadata
+    }
+}
+
+class CacheImage {
+    let image: Image
+    
+    init(image: Image) {
+        self.image = image
+    }
+}
+
 class ComicStore {
-    static func getMetadata(_ comicNum: Int) async -> ComicMetadata? {
-        if let storedMetadata = PersistenceProvider.default.getComicMetadata(comicNum) {
+    private static let metadataCache: NSCache<CacheKey, CacheSafeComicMetadata> = NSCache()
+    private static let imageCache: NSCache<CacheKey, CacheImage> = NSCache()
+    
+    static func getMetadata(_ comicNum: Int) async -> SafeComicMetadata? {
+        if let cachedMetadata = metadataCache.object(forKey: CacheKey(num: comicNum))?.comicMetadata {
+            return cachedMetadata
+        }
+        
+        if let storedMetadata = await PersistenceProvider.default.getComicMetadata(comicNum) {
+            metadataCache.setObject(CacheSafeComicMetadata(comicMetadata: storedMetadata), forKey: CacheKey(num: comicNum))
             return storedMetadata
         }
         
@@ -25,32 +71,53 @@ class ComicStore {
             return nil
         }
         
-        return PersistenceProvider.default.createComicMetadata(jsonComicMetadata: jsonMetadata)
+        let createdMetadata: SafeComicMetadata? = await PersistenceProvider.default.createComicMetadata(jsonComicMetadata: jsonMetadata)
+        
+        if let createdMetadata = createdMetadata {
+            metadataCache.setObject(CacheSafeComicMetadata(comicMetadata: createdMetadata), forKey: CacheKey(num: comicNum))
+        }
+        
+        return createdMetadata
     }
     
-    static func getLatestStoredMetadata() -> ComicMetadata? {
-        return PersistenceProvider.default.getLatestStoredMetadata()
+    static func getLatestStoredMetadata() async -> SafeComicMetadata? {
+        return await PersistenceProvider.default.getLatestStoredMetadata()
     }
     
-    static func getImage(_ comicNum: Int) async -> ComicImage? {
+    static func getImageData(_ comicNum: Int) async -> Image? {
+        if let cachedImage = imageCache.object(forKey: CacheKey(num: comicNum)) {
+            return cachedImage.image
+        }
+        
         guard let comicMetadata = await getMetadata(comicNum)
         else {
             // Stored metadata doesn't exist and there was an error fetching it from the server
             return nil
         }
         
-        if comicMetadata.comicImage != nil {
-            return comicMetadata.comicImage!
+        if let storedImageData = await PersistenceProvider.default.getComicImageData(comicMetadata: comicMetadata) {
+            // TODO(Adin): Check for failed UIImage creation
+            let image: Image = Image(uiImage: UIImage(data: storedImageData)!)
+            imageCache.setObject(CacheImage(image: image), forKey: CacheKey(num: comicNum))
+            return image
         }
         
-        // WHY IS comicMetadata.img AN OPTIONAL????
-        guard let fetchedImage = try? await ComicLoader.getComicImageData(imgAddress: comicMetadata.img!)
+        guard let fetchedImage = try? await ComicLoader.getComicImageData(imgAddress: comicMetadata.img)
         else {
             // Error fetching comic image data
             return nil
         }
         
-        return PersistenceProvider.default.createComicImage(comicMetadata: comicMetadata, data: fetchedImage)
+        let createdImageData: Data? = await PersistenceProvider.default.createComicImage(comicMetadata: comicMetadata, data: fetchedImage)
+        
+        if let createdImageData = createdImageData {
+            // TODO(Adin): Check for failed UIImage creation
+            let createdImage = Image(uiImage: UIImage(data: createdImageData)!)
+            imageCache.setObject(CacheImage(image: createdImage), forKey: CacheKey(num: comicNum))
+            return createdImage
+        }
+        
+        return nil
     }
     
     static func refreshComicStore() async {
@@ -61,7 +128,7 @@ class ComicStore {
         }
         
         let baseComicNum: Int
-        if let latestStoredMetadata = PersistenceProvider.default.getLatestStoredMetadata() {
+        if let latestStoredMetadata = await PersistenceProvider.default.getLatestStoredMetadata() {
             baseComicNum = Int(latestStoredMetadata.num)
         }
         else {
@@ -72,7 +139,7 @@ class ComicStore {
         // .reversed() to load the comics newest -> oldest
         for comicNum in (baseComicNum...Int(latestMetadata.num)).reversed() {
             if let jsonMetadata = try? await ComicLoader.getComicMetadata(comicNum: comicNum) {
-                PersistenceProvider.default.createComicMetadata(jsonComicMetadata: jsonMetadata)
+                await PersistenceProvider.default.createComicMetadata(jsonComicMetadata: jsonMetadata)
             }
         }
     }
