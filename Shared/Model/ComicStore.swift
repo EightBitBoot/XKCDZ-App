@@ -84,6 +84,10 @@ class ComicStore {
         return await PersistenceProvider.default.getLatestStoredMetadata()
     }
     
+    static func getLatestStoredMetadataBlocking() -> SafeComicMetadata? {
+        return PersistenceProvider.default.getLatestStoredMetadataBlocking()
+    }
+    
     static func getImageData(_ comicNum: Int) async -> Image? {
         if let cachedImage = imageCache.object(forKey: CacheKey(num: comicNum)) {
             return cachedImage.image

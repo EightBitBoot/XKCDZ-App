@@ -13,6 +13,9 @@ struct ComicImageView: View {
     var comicNum: Int
     @StateObject private var comicModelView: ComicImageModelView = ComicImageModelView()
     
+    @State private var currentAmount = 0.0
+    @State private var finalAmount = 1.0
+    
     var body: some View {
         Group {
             if comicModelView.errorLoading {
@@ -36,6 +39,17 @@ struct ComicImageView: View {
                     comicModelView.image?
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .scaleEffect(finalAmount + currentAmount)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { amount in
+                                    currentAmount = amount - 1
+                                }
+                                .onEnded { amount in
+                                    finalAmount += currentAmount
+                                    currentAmount = 0
+                                }
+                        )
                 }
             }
         }

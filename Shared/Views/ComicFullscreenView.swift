@@ -6,31 +6,34 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ComicFullscreenView: View {
     @StateObject var comicMetadataModelView: ComicMetadataModelView = ComicMetadataModelView()
     @State var isAltShown: Bool = false
-    var comicNum: Int
+    @State var isTestShown: Bool = false
+    
+    @State var currentComicNum: Int
     
     var body: some View {
-        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? comicNum.description : "\(comicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title)"
-        let altText: String = comicMetadataModelView.comicMetadata == nil ? "Loading alt text..." : comicMetadataModelView.comicMetadata!.alt
+        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? currentComicNum.description : "\(currentComicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title)"
         
-        ComicImageView(comicNum: comicNum)
+        UIComicPageViewControllerRepresentatble(currentComicNum: $currentComicNum)
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .task {
-                await comicMetadataModelView.load(comicNum)
+                await comicMetadataModelView.load(currentComicNum)
             }
-            .onLongPressGesture {
-                self.isAltShown.toggle()
+            .onReceive(Just(currentComicNum)) { newValue in
+                Task {
+                    await comicMetadataModelView.load(newValue)
+                }
             }
-            .alert(altText, isPresented: $isAltShown, actions: {})
     }
 }
 
 struct ComicFullscreenView_Previews: PreviewProvider {
     static var previews: some View {
-        ComicFullscreenView(comicNum: 110)
+        ComicFullscreenView(currentComicNum: 110)
     }
 }

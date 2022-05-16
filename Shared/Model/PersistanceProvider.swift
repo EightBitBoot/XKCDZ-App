@@ -96,6 +96,30 @@ final class PersistenceProvider {
         return result
     }
     
+    func getLatestStoredMetadataBlocking() -> SafeComicMetadata? {
+        // TODO(Adin): Avoid code duplication
+        let request: NSFetchRequest<ComicMetadata> = ComicMetadata.fetchRequest()
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \ComicMetadata.num, ascending: false)
+        ]
+        
+        var result: SafeComicMetadata? = nil
+        context.performAndWait { [weak self] in
+            guard let self = self
+            else {
+                return
+            }
+            
+            let fetchResult = try? self.context.fetch(request)
+            
+            if fetchResult != nil && !fetchResult!.isEmpty {
+                result = try? fetchResult![0].toSafeType()
+            }
+        }
+        
+        return result
+    }
+    
     func createComicImage(comicMetadata: SafeComicMetadata, data: Data) async -> Data {
         if let storedImageData = await getComicImageData(comicMetadata: comicMetadata) {
             // Avoid duplicates

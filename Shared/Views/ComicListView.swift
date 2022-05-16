@@ -34,7 +34,7 @@ struct ComicListView: View {
                     List {
                         ForEach((1...comicListModelView.latestComicNum!).reversed(), id: \.self) { comicNum in
                             NavigationLink {
-                                ComicFullscreenView(comicNum: comicNum)
+                                ComicFullscreenView(currentComicNum: comicNum)
                             } label: {
                                 ComicListRowView(comicNum: comicNum)
                             }
