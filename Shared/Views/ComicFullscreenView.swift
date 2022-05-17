@@ -9,9 +9,7 @@ import SwiftUI
 import Combine
 
 struct ComicFullscreenView: View {
-    @StateObject var comicMetadataModelView: ComicMetadataModelView = ComicMetadataModelView()
-    @State var isAltShown: Bool = false
-    @State var isTestShown: Bool = false
+    @StateObject private var comicMetadataModelView: ComicMetadataModelView = ComicMetadataModelView()
     
     @State var currentComicNum: Int
     

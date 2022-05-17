@@ -7,9 +7,13 @@
 
 import SwiftUI
 
-struct ComicImageViewLongPressWrapper: View {
+class IsAltShownWrapper: ObservableObject {
+    @Published var isAltShown: Bool = false
+}
+
+struct ComicImageWithAltView: View {
     @StateObject private var metadataModelView: ComicMetadataModelView = ComicMetadataModelView();
-    @State private var isAltShown: Bool = false
+    @ObservedObject private var isAltShownWrapper: IsAltShownWrapper = IsAltShownWrapper()
     
     let comicNum: Int
     
@@ -20,15 +24,18 @@ struct ComicImageViewLongPressWrapper: View {
             .task {
                 await metadataModelView.load(comicNum)
             }
-            .onLongPressGesture {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                isAltShown.toggle()
-            }
-            .alert(altText, isPresented: $isAltShown, actions: {})
+            .alert(altText, isPresented: $isAltShownWrapper.isAltShown, actions: {})
+    }
+    
+    func showAlt() {
+        if !isAltShownWrapper.isAltShown {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            isAltShownWrapper.isAltShown.toggle()
+        }
     }
 }
 
-class UIComicImageViewHostingController: UIHostingController<ComicImageViewLongPressWrapper> {
+class UIComicImageViewHostingController: UIHostingController<ComicImageWithAltView> {
     let comicNum: Int
     
     required init?(coder: NSCoder) {
@@ -37,6 +44,16 @@ class UIComicImageViewHostingController: UIHostingController<ComicImageViewLongP
     
     init(comicNum: Int) {
         self.comicNum = comicNum
-        super.init(rootView: ComicImageViewLongPressWrapper(comicNum: comicNum))
+        super.init(rootView: ComicImageWithAltView(comicNum: comicNum))
+    }
+    
+    override func viewDidLoad() {
+        view.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureHandler(_:))))
+    }
+    
+    @objc func longPressGestureHandler(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            rootView.showAlt()
+        }
     }
 }
