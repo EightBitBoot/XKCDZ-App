@@ -13,7 +13,25 @@ struct XKCDZApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ComicListView()
+//            ComicListView()
+            NavigationView {
+                VStack {
+                    NavigationLink {
+                        ComicListView()
+                    } label: {
+                        Text("List View")
+                    }
+                    
+                    Spacer()
+                        .frame(height: 30)
+                    
+                    NavigationLink {
+                        UIComicCollectionViewControllerRepresentable()
+                    } label: {
+                        Text("Collection View")
+                    }
+                }
+            }
         }
     }
 }

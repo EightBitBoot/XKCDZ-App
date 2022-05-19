@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C610A8722834CFAA00CC6765 /* UIComicCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A8712834CFAA00CC6765 /* UIComicCollectionViewController.swift */; };
+		C610A8732834CFAA00CC6765 /* UIComicCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A8712834CFAA00CC6765 /* UIComicCollectionViewController.swift */; };
+		C610A8752834CFE200CC6765 /* UIComicCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A8742834CFE200CC6765 /* UIComicCollectionViewCell.swift */; };
+		C610A8762834CFE200CC6765 /* UIComicCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A8742834CFE200CC6765 /* UIComicCollectionViewCell.swift */; };
+		C610A87828361D9A00CC6765 /* UIComicCollectionViewHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A87728361D9A00CC6765 /* UIComicCollectionViewHostingController.swift */; };
+		C610A87928361D9A00CC6765 /* UIComicCollectionViewHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C610A87728361D9A00CC6765 /* UIComicCollectionViewHostingController.swift */; };
 		C6173A40280737AE005F6E06 /* ComicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A3F280737AE005F6E06 /* ComicListView.swift */; };
 		C6173A41280737AE005F6E06 /* ComicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A3F280737AE005F6E06 /* ComicListView.swift */; };
 		C6173A43280758D7005F6E06 /* ComicImageModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6173A42280758D7005F6E06 /* ComicImageModelView.swift */; };
@@ -66,6 +72,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C610A8712834CFAA00CC6765 /* UIComicCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComicCollectionViewController.swift; sourceTree = "<group>"; };
+		C610A8742834CFE200CC6765 /* UIComicCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComicCollectionViewCell.swift; sourceTree = "<group>"; };
+		C610A87728361D9A00CC6765 /* UIComicCollectionViewHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComicCollectionViewHostingController.swift; sourceTree = "<group>"; };
 		C6173A3F280737AE005F6E06 /* ComicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicListView.swift; sourceTree = "<group>"; };
 		C6173A42280758D7005F6E06 /* ComicImageModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicImageModelView.swift; sourceTree = "<group>"; };
 		C6173A4528076BCF005F6E06 /* ComicLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicLoader.swift; sourceTree = "<group>"; };
@@ -129,6 +138,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C610A8702834CF8600CC6765 /* UIComicCollectionViewController */ = {
+			isa = PBXGroup;
+			children = (
+				C610A8712834CFAA00CC6765 /* UIComicCollectionViewController.swift */,
+				C610A8742834CFE200CC6765 /* UIComicCollectionViewCell.swift */,
+				C610A87728361D9A00CC6765 /* UIComicCollectionViewHostingController.swift */,
+			);
+			path = UIComicCollectionViewController;
+			sourceTree = "<group>";
+		};
 		C65749DF282C40DE00B11C27 /* UIComicPageViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +232,7 @@
 		C6D0335B2806305400E0EAB2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C610A8702834CF8600CC6765 /* UIComicCollectionViewController */,
 				C65749DF282C40DE00B11C27 /* UIComicPageViewController */,
 				C6D0335C2806306400E0EAB2 /* ComicImageView.swift */,
 				C6173A3F280737AE005F6E06 /* ComicListView.swift */,
@@ -416,6 +436,8 @@
 				C6D033682806332200E0EAB2 /* XKCDTypes.swift in Sources */,
 				C6D0335D2806306400E0EAB2 /* ComicImageView.swift in Sources */,
 				C6173A40280737AE005F6E06 /* ComicListView.swift in Sources */,
+				C610A8722834CFAA00CC6765 /* UIComicCollectionViewController.swift in Sources */,
+				C610A87828361D9A00CC6765 /* UIComicCollectionViewHostingController.swift in Sources */,
 				C6AC10B528096686003A4FD2 /* ComicMetadataModelView.swift in Sources */,
 				C65749F7282F6C8C00B11C27 /* UIComicPageViewController+DataSource.swift in Sources */,
 				C6CA24202807869800F1414E /* ComicFullscreenView.swift in Sources */,
@@ -429,6 +451,7 @@
 				C6E6272028093E540079CE62 /* PersistanceProvider.swift in Sources */,
 				C6E6271D280936490079CE62 /* xkcdz.xcdatamodeld in Sources */,
 				C686BAD0280E118D0052EC01 /* TestView.swift in Sources */,
+				C610A8752834CFE200CC6765 /* UIComicCollectionViewCell.swift in Sources */,
 				C6173A43280758D7005F6E06 /* ComicImageModelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -444,7 +467,10 @@
 				C6CA24212807869800F1414E /* ComicFullscreenView.swift in Sources */,
 				C6CA24242807982D00F1414E /* ComicStore.swift in Sources */,
 				C6173A4728076BCF005F6E06 /* ComicLoader.swift in Sources */,
+				C610A87928361D9A00CC6765 /* UIComicCollectionViewHostingController.swift in Sources */,
 				C6D0334228062E6600E0EAB2 /* XKCDZApp.swift in Sources */,
+				C610A8762834CFE200CC6765 /* UIComicCollectionViewCell.swift in Sources */,
+				C610A8732834CFAA00CC6765 /* UIComicCollectionViewController.swift in Sources */,
 				C6173A4A28076CDD005F6E06 /* ComicListModelView.swift in Sources */,
 				C6E6272128093E540079CE62 /* PersistanceProvider.swift in Sources */,
 				C6E6271E280936490079CE62 /* xkcdz.xcdatamodeld in Sources */,
