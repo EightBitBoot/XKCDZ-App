@@ -11,14 +11,12 @@ import SwiftUI
 class UIComicCollectionViewController: UICollectionViewController {
     typealias DataSource = UICollectionViewDiffableDataSource<Int, Int>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Int>
+    typealias Cell = UIComicCollectionViewCell
     
     var dataSource: DataSource!
     
     init() {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
-        
-        // The comic grid view isn't going to be reorganizable
-//        installsStandardGestureForInteractiveMovement = false
     }
     
     required init(coder: NSCoder) {
@@ -28,29 +26,45 @@ class UIComicCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let cellRegistration = UICollectionView.CellRegistration<UIComicCollectionViewCell, Int>(handler: cellRegistrationHandler(_:_:_:))
+        let layout: UIComicCollectionViewLayout = UIComicCollectionViewLayout()
+        layout.settings = UIComicCollectionViewLayout.Settings(numColumns: 2)
+        
+        // Remove old, default collection view from super view
+        // before adding new one
+        collectionView.removeFromSuperview()
+        
+        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.alwaysBounceVertical = true
+        collectionView.indicatorStyle = .white
+        collectionView.delegate = self
+        
+        let cellRegistration = UICollectionView.CellRegistration<Cell, Int>(handler: cellRegistrationHandler(_:_:_:))
         dataSource = DataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, itemIdentifier: Int) in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
         }
         
-        applyTestSnapshot()
-        
         collectionView.dataSource = dataSource
+        
+        self.view.addSubview(collectionView)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        applyTestSnapshot()
+    }
     
-    func cellRegistrationHandler(_ cell: UIComicCollectionViewCell, _ indexPath: IndexPath, _ itemIdentifier: Int) {
+    private func cellRegistrationHandler(_ cell: Cell, _ indexPath: IndexPath, _ itemIdentifier: Int) {
         for subview in cell.subviews {
             subview.removeFromSuperview()
         }
-        
-//        cell.layer.shouldRasterize = true
-//        cell.layer.rasterizationScale = UIScreen.main.scale
-        
+
+//        print("indexPath.item: \(indexPath.item), indexPath.row: \(indexPath.row), itemIdentifier: \(itemIdentifier)")
+
         cell.host(UIHostingController(rootView: ComicCollectionViewCellView(comicNum: itemIdentifier)))
     }
     
-    func applyTestSnapshot() {
+    private func applyTestSnapshot() {
         var snapshot: Snapshot = Snapshot()
         
         snapshot.appendSections([0])
@@ -58,11 +72,5 @@ class UIComicCollectionViewController: UICollectionViewController {
         snapshot.appendItems([Int]((1...ComicStore.getLatestStoredMetadataBlocking()!.num).reversed()))
         
         dataSource.apply(snapshot)
-    }
-}
-
-extension UIComicCollectionViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt: IndexPath) -> CGSize {
-        return CGSize(width: 300, height: 300)
     }
 }
