@@ -8,7 +8,7 @@
 import Foundation
 
 class ComicMetadataModelView: ObservableObject {
-    @Published var comicMetadata: SafeComicMetadata? = nil
+    @Published var comicMetadata: ComicMetadata? = nil
     
     @MainActor
     func load(_ comicNum: Int) async {

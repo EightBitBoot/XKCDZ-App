@@ -39,10 +39,10 @@ struct ComicLoader {
         return (dataResult.0, htmlResponse)
     }
     
-    static func getComicMetadata(comicNum: Int? = nil) async throws -> JsonComicMetadata {
+    static func getComicMetadata(comicNum: Int? = nil) async throws -> ComicMetadata {
         let address: String = (comicNum == nil ? XKCD_BASE_URL + "info.0.json" : XKCD_BASE_URL + "\(comicNum!)/info.0.json")
         let getResult: (Data, HTTPURLResponse) = try await httpGetRequest(address)
-        return try JSONDecoder().decode(JsonComicMetadata.self, from: getResult.0)
+        return try JSONDecoder().decode(ComicMetadata.self, from: getResult.0)
     }
     
     static func getComicImageData(imgAddress: String) async throws -> Data {

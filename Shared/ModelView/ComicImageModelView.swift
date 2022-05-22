@@ -15,10 +15,7 @@ class ComicImageModelView: ObservableObject {
     
     @MainActor
     func load(_ comicNum: Int) async {
-        // TODO(Adin): Clean up error handling
-        // TODO(Adin): Check comic cache first
-        
-        if let loadedImage = await ComicStore.getImageData(comicNum) {
+        if let loadedImage = await ComicStore.getComicImage(comicNum) {
             image = loadedImage
         }
         else {

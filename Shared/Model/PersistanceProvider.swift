@@ -8,6 +8,18 @@
 import Foundation
 import CoreData
 
+enum StoreActionResult {
+    case Sucess
+    case Failure(StoreActionFailureReason)
+    case AlreadyStored
+}
+
+enum StoreActionFailureReason {
+    case ContextSaveFailed
+    case StoreComicImageWithoutMetadata
+}
+
+
 final class PersistenceProvider {
     let persistentContainer: NSPersistentContainer
     var context: NSManagedObjectContext { persistentContainer.viewContext }
@@ -25,61 +37,41 @@ final class PersistenceProvider {
     }
     
     @discardableResult
-    func createComicMetadata(jsonComicMetadata: JsonComicMetadata) async -> SafeComicMetadata? {
-        if let storedMetadata = await getComicMetadata(jsonComicMetadata.num) {
+    func storeComicMetadata(comicMetadata: ComicMetadata) async -> StoreActionResult {
+        if await getComicMetadata(comicMetadata.num) != nil {
             // Avoid duplicates
-            
-            return storedMetadata
+            return .AlreadyStored
         }
         
-        var result: SafeComicMetadata? = nil
+        var result: StoreActionResult = .Sucess
         await context.perform { [unowned self] in
-            let newComicMeta = ComicMetadata(context: context)
+            let newStoredComicMetadata = StoredComicMetadata(context: context)
             
-            newComicMeta.num        = Int32(jsonComicMetadata.num)
-            newComicMeta.img        = jsonComicMetadata.img
-            newComicMeta.safe_title = jsonComicMetadata.safe_title
-            newComicMeta.alt        = jsonComicMetadata.alt
-            newComicMeta.day        = jsonComicMetadata.day
-            newComicMeta.month      = jsonComicMetadata.month
-            newComicMeta.year       = jsonComicMetadata.year
-            newComicMeta.title      = jsonComicMetadata.title
-            newComicMeta.transcript = jsonComicMetadata.transcript
-            newComicMeta.link       = jsonComicMetadata.link
-            newComicMeta.news       = jsonComicMetadata.news
+            newStoredComicMetadata.num        = Int32(comicMetadata.num)
+            newStoredComicMetadata.img        = comicMetadata.img
+            newStoredComicMetadata.safe_title = comicMetadata.safe_title
+            newStoredComicMetadata.alt        = comicMetadata.alt
+            newStoredComicMetadata.date       = comicMetadata.date
+            newStoredComicMetadata.title      = comicMetadata.title
+            newStoredComicMetadata.transcript = comicMetadata.transcript
+            newStoredComicMetadata.link       = comicMetadata.link
+            newStoredComicMetadata.news       = comicMetadata.news
             
-            try? context.save()
-            
-            // This should never fail here? :)
-            result = try! newComicMeta.toSafeType()
-        }
-        
-        return result
-    }
-    
-    func getComicMetadata(_ comicNum: Int) async -> SafeComicMetadata? {
-        let request: NSFetchRequest<ComicMetadata> = ComicMetadata.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %d", #keyPath(ComicMetadata.num), comicNum)
-        
-        var result: SafeComicMetadata? = nil
-        await context.perform { [unowned self] in
-            let fetchResult = try? context.fetch(request)
-            
-            if fetchResult != nil && !fetchResult!.isEmpty {
-                result = try? fetchResult![0].toSafeType()
+            if (try? context.save()) == nil {
+                result = .Failure(.ContextSaveFailed)
             }
         }
         
         return result
     }
     
-    func getLatestStoredMetadata() async -> SafeComicMetadata? {
-        let request: NSFetchRequest<ComicMetadata> = ComicMetadata.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \ComicMetadata.num, ascending: false)
-        ]
+    func getComicMetadata(_ comicNum: Int) async -> ComicMetadata? {
+        let request: NSFetchRequest<StoredComicMetadata> = StoredComicMetadata.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicMetadata.num), comicNum)
+        request.includesSubentities = false
+        request.fetchLimit = 1
         
-        var result: SafeComicMetadata? = nil
+        var result: ComicMetadata? = nil
         await context.perform { [weak self] in
             guard let self = self
             else {
@@ -88,22 +80,41 @@ final class PersistenceProvider {
             
             let fetchResult = try? self.context.fetch(request)
             
-            if fetchResult != nil && !fetchResult!.isEmpty {
-                result = try? fetchResult![0].toSafeType()
+            guard let fetchResult = fetchResult,
+                  !fetchResult.isEmpty
+            else {
+                return
             }
+            
+            result = try? fetchResult[0].toSafeType()
+#if DEBUG
+            if result == nil {
+                // StoredComicMetadata.toSafeType() failed
+                print("Failed to convert SavedComicMetadata number \(comicNum) to ComicMetadata via toSafeType()")
+            }
+#endif
         }
         
         return result
     }
     
-    func getLatestStoredMetadataBlocking() -> SafeComicMetadata? {
-        // TODO(Adin): Avoid code duplication
-        let request: NSFetchRequest<ComicMetadata> = ComicMetadata.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \ComicMetadata.num, ascending: false)
-        ]
+    func getLatestStoredMetadata() async -> ComicMetadata? {
+       return await Task {
+                        getLatestStoredMetadataBlocking()
+                    }
+                    .value
         
-        var result: SafeComicMetadata? = nil
+    }
+    
+    func getLatestStoredMetadataBlocking() -> ComicMetadata? {
+        let request: NSFetchRequest<StoredComicMetadata> = StoredComicMetadata.fetchRequest()
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \StoredComicMetadata.num, ascending: false)
+        ]
+        request.includesSubentities = false
+        request.fetchLimit = 1
+        
+        var result: ComicMetadata? = nil
         context.performAndWait { [weak self] in
             guard let self = self
             else {
@@ -112,59 +123,113 @@ final class PersistenceProvider {
             
             let fetchResult = try? self.context.fetch(request)
             
-            if fetchResult != nil && !fetchResult!.isEmpty {
-                result = try? fetchResult![0].toSafeType()
+            guard let fetchResult = fetchResult,
+                  !fetchResult.isEmpty
+            else {
+                return
             }
+            
+            result = try? fetchResult[0].toSafeType()
+#if DEBUG
+            if result == nil {
+                // StoredComicMetadata.toSafeType() failed
+                print("Failed to convert SavedComicMetadata number \(fetchResult[0].num) to ComicMetadata via toSafeType()")
+            }
+#endif
         }
         
         return result
     }
     
-    func createComicImage(comicMetadata: SafeComicMetadata, data: Data) async -> Data {
-        if let storedImageData = await getComicImageData(comicMetadata: comicMetadata) {
-            // Avoid duplicates
+    func getImageRatio(_ comicNum: Int) async -> Float? {
+        return await Task {
+                        getImageRatioBlocking(comicNum)
+                    }
+                    .value
+    }
+    
+    func getImageRatioBlocking(_ comicNum: Int) -> Float? {
+        let request = StoredComicImage.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicMetadata.num), comicNum)
+        request.includesSubentities = false
+        request.fetchLimit = 1
+        request.propertiesToFetch = ["ratio"]
+        
+        var result: Float? = nil
+        context.performAndWait { [weak self] in
+            guard let self = self
+            else {
+                return
+            }
             
-            return storedImageData
+            let fetchResult = try? self.context.fetch(request)
+            
+            guard let fetchResult = fetchResult,
+                  !fetchResult.isEmpty
+            else {
+                return
+            }
+            
+            result = fetchResult[0].ratio
         }
         
+        return result
+    }
+    
+    @discardableResult
+    func storeComicImage(comicMetadata: ComicMetadata, comicImage: ComicImage) async -> StoreActionResult {
+        if await getComicImageData(comicMetadata: comicMetadata) != nil{
+            // Avoid duplicates
+            return .AlreadyStored
+        }
+
+        var result: StoreActionResult = .Sucess
         await context.perform { [weak self] in
             guard let self = self
             else {
                 return
             }
             
-            let result: ComicImage = ComicImage(context: self.context)
-        
-            let metadataFetchRequest: NSFetchRequest<ComicMetadata> = ComicMetadata.fetchRequest()
-            metadataFetchRequest.predicate = NSPredicate(format: "%K == %d", #keyPath(ComicMetadata.num), Int32(comicMetadata.num))
+            let metadataFetchRequest: NSFetchRequest<StoredComicMetadata> = StoredComicMetadata.fetchRequest()
+            metadataFetchRequest.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicMetadata.num), Int32(comicMetadata.num))
+            metadataFetchRequest.includesSubentities = false
+            metadataFetchRequest.fetchLimit = 1
             
             let fetchResult = try? self.context.fetch(metadataFetchRequest)
-            guard let fetchResult = fetchResult, !fetchResult.isEmpty
+            guard let fetchResult = fetchResult,
+                  !fetchResult.isEmpty
             else {
+                result = .Failure(.StoreComicImageWithoutMetadata)
                 return
             }
             
-            let loadedMetadata = fetchResult[0]
+            let fetchedStoredComicMetadata = fetchResult[0]
             
-            result.num = Int32(comicMetadata.num)
-            result.data = data
-            result.comicMetadata = loadedMetadata
+            let newStoredComicImage: StoredComicImage = StoredComicImage(context: self.context)
+            newStoredComicImage.num = Int32(comicMetadata.num)
+            newStoredComicImage.data = comicImage.data
+            newStoredComicImage.ratio = comicImage.ratio
+            newStoredComicImage.comicMetadata = fetchedStoredComicMetadata
             
-            loadedMetadata.comicImage = result
+            fetchedStoredComicMetadata.comicImage = newStoredComicImage
         
-            try? self.context.save()
+            if (try? self.context.save()) == nil {
+                result = .Failure(.ContextSaveFailed)
+            }
         }
         
-        return data
+        return result
     }
     
-    private func getComicImageData(_ comicNum: Int) async -> Data? {
-        // This is private to avoid getting an image by number without having downloaded the image metadata
+    private func getComicImageData(_ comicNum: Int) async -> ComicImage? {
+        // This is private to strongly discourage getting a comic's image without having downloaded the image metadata first
         
-        let request: NSFetchRequest<ComicImage> = ComicImage.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %d", #keyPath(ComicImage.num), Int32(comicNum))
+        let request: NSFetchRequest<StoredComicImage> = StoredComicImage.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicImage.num), Int32(comicNum))
+        request.includesSubentities = false
+        request.fetchLimit = 1
         
-        var result: Data? = nil
+        var result: ComicImage? = nil
         await context.perform { [weak self] in
             guard let self = self
             else {
@@ -174,23 +239,20 @@ final class PersistenceProvider {
             let fetchResult = try? self.context.fetch(request)
             
             if fetchResult != nil && !fetchResult!.isEmpty {
-                result = fetchResult![0].data
+                result = try? fetchResult![0].toSafeType()
+#if DEBUG
+                // StoredComicMetadata.toSafeType() failed
+                if result == nil {
+                    print("Failed to convert SavedComicImage number \(comicNum) to ComicImage via toSafeType()")
+                }
+#endif
             }
         }
         
         return result
     }
     
-    func getComicImageData(comicMetadata: SafeComicMetadata) async -> Data? {
+    func getComicImageData(comicMetadata: ComicMetadata) async -> ComicImage? {
         return await getComicImageData(comicMetadata.num)
     }
-}
-
-enum SafeMapError: Error {
-    case InvalidMapping
-}
-
-protocol ToSafeType {
-    associatedtype SafeType
-    func toSafeType() throws -> SafeType
 }
