@@ -70,6 +70,7 @@ final class PersistenceProvider {
         request.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicMetadata.num), comicNum)
         request.includesSubentities = false
         request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         
         var result: ComicMetadata? = nil
         await context.perform { [weak self] in
@@ -113,6 +114,7 @@ final class PersistenceProvider {
         ]
         request.includesSubentities = false
         request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         
         var result: ComicMetadata? = nil
         context.performAndWait { [weak self] in
@@ -176,6 +178,33 @@ final class PersistenceProvider {
         return result
     }
     
+    func getAllImageRatiosBlocking() -> [Int:Float] {
+        let request = StoredComicImage.fetchRequest()
+        request.includesSubentities = false
+        request.returnsObjectsAsFaults = false
+        request.propertiesToFetch = ["num", "ratio"]
+        
+        var result: [Int:Float] = [:]
+        context.performAndWait { [weak self] in
+            guard let self = self
+            else {
+                return
+            }
+            
+            let fetchResult = try? self.context.fetch(request)
+            guard let fetchResult = fetchResult
+            else {
+                return
+            }
+            
+            fetchResult.forEach { comicImage in
+                result[Int(comicImage.num)] = comicImage.ratio
+            }
+        }
+        
+        return result
+    }
+    
     @discardableResult
     func storeComicImage(comicMetadata: ComicMetadata, comicImage: ComicImage) async -> StoreActionResult {
         if await getComicImageData(comicMetadata: comicMetadata) != nil{
@@ -228,6 +257,7 @@ final class PersistenceProvider {
         request.predicate = NSPredicate(format: "%K == %d", #keyPath(StoredComicImage.num), Int32(comicNum))
         request.includesSubentities = false
         request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
         
         var result: ComicImage? = nil
         await context.perform { [weak self] in

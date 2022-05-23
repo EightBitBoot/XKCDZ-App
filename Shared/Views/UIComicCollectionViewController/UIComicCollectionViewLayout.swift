@@ -24,8 +24,7 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
     private var columnHeights: [CGFloat] = [CGFloat](repeating: 0.0, count: Settings.default.numColumns)
     private var columnMembers: [[Int]] = [[Int]](repeating: [Int](), count: Settings.default.numColumns)
     private var layoutAttributesCache: [UICollectionViewLayoutAttributes] = [UICollectionViewLayoutAttributes]()
-    // TODO(Adin): Temp
-    private static var heightsCache: [CGFloat] = [CGFloat]()
+    private var ratiosCache: [Int:Float] = [:]
     
     convenience override init() {
         self.init(settings: nil)
@@ -49,7 +48,7 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
             return .zero
         }
         
-        return CGSize(width: collectionView.frame.width, height: columnHeights.max()! + (2 * settings.verticalColumnInset))
+        return CGSize(width: collectionView.bounds.width, height: columnHeights.max()! + (2 * settings.verticalColumnInset))
     }
     
     override func prepare() {
@@ -72,13 +71,7 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
             columnMembers[columnIndex].removeAll()
         }
         
-        // TODO(Adin): Temp
-        if Self.heightsCache.isEmpty {
-            for _ in 0..<collectionView.numberOfItems(inSection: 0) {
-                Self.heightsCache.append(CGFloat.random(in: 200...500))
-            }
-                
-        }
+        ratiosCache = ComicStore.getAllImageRatiosBlocking()
         
         // Total width of all horizontal empty space (insets, and column spacings)
         let horizontalEmptySpace = (2 * settings.horizontalColumnInset) + (settings.horizontalColumnSpacing * CGFloat(settings.numColumns - 1))
@@ -92,11 +85,15 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
         for item in 0..<collectionView.numberOfItems(inSection: 0) {
             currentIndexPath = IndexPath(item: item, section: 0)
             
+            let itemHeight = getItemHeight(index: currentIndexPath, itemWidth: itemWidth)
+            
+//            print("itemIndex: \(currentIndexPath.item), itemHeight: \(itemHeight), itemHeight==itemWidth: \(itemHeight == itemWidth)")
+            
             currentLayoutAttribute = UICollectionViewLayoutAttributes(forCellWith: currentIndexPath)
             currentLayoutAttribute.frame = CGRect(x: settings.horizontalColumnInset + (itemWidth * CGFloat(shortestColumnIndex)) + (settings.horizontalColumnSpacing * CGFloat(shortestColumnIndex)),
                                                   y: columnHeights[shortestColumnIndex],
                                                   width: itemWidth,
-                                                  height: getItemHeight(index: currentIndexPath))
+                                                  height: itemHeight)
             
             columnHeights[shortestColumnIndex] += currentLayoutAttribute.frame.height + settings.verticalItemSpacing
             
@@ -188,8 +185,22 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
     // }
     
     // TODO(Adin): Make this get the real, adjusted height
-    func getItemHeight(index: IndexPath) -> CGFloat {
-        return Self.heightsCache[index.item]
+    func getItemHeight(index: IndexPath, itemWidth: CGFloat) -> CGFloat {
+        guard let collectionView = collectionView,
+              collectionView.numberOfSections > 0,
+              collectionView.numberOfItems(inSection: 0) > 0
+        else {
+            return itemWidth
+        }
+        
+        let comicNum: Int = collectionView.numberOfItems(inSection: 0) - index.item
+        
+        guard let itemRatio: Float = ratiosCache[comicNum]
+        else {
+            return itemWidth
+        }
+        
+        return itemWidth * CGFloat(itemRatio)
     }
     
 }

@@ -117,7 +117,7 @@ class ComicStore {
         let ratio: CGFloat = (newUIKitImage.size.height * newUIKitImage.scale) / (newUIKitImage.size.width * newUIKitImage.scale)
         let createdComicImage = ComicImage(num: comicNum, data: fetchedImageData, ratio: Float(ratio))
         
-        print("\(await PersistenceProvider.default.storeComicImage(comicMetadata: comicMetadata, comicImage: createdComicImage))")
+        await PersistenceProvider.default.storeComicImage(comicMetadata: comicMetadata, comicImage: createdComicImage)
         
         let newSwiftUIImage = Image(uiImage: newUIKitImage)
         imageCache.setObject(CacheComicImage(image: newSwiftUIImage, ratio: Float(ratio)), forKey: CacheKey(num: comicNum))
@@ -130,6 +130,17 @@ class ComicStore {
     
     static func getImageRatioBlocking(_ comicNum: Int) -> Float? {
         return PersistenceProvider.default.getImageRatioBlocking(comicNum)
+    }
+    
+    static func getAllImageRatios() async -> [Int: Float] {
+        return await Task {
+                         getAllImageRatiosBlocking()
+                     }
+                     .value
+    }
+    
+    static func getAllImageRatiosBlocking() -> [Int:Float] {
+        return PersistenceProvider.default.getAllImageRatiosBlocking()
     }
     
     static func refreshComicStore() async {

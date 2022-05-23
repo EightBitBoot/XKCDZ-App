@@ -8,12 +8,41 @@
 import SwiftUI
 import UIKit
 
+// NOTE(Adin): Everything commented is something I've tried to get the SwiftUI cells
+//             to properly resize into their parents without needing to tap on them
+//             first
+
+//class Refresher: ObservableObject {
+//    @Published var needsToRefresh: Bool = false
+//}
+
 struct ComicCollectionViewCellView: View {
     var comicNum: Int
+    
+//    @StateObject private var comicImageModelView: ComicImageModelView = ComicImageModelView()
+    
+//    @ObservedObject var refresher: Refresher = Refresher()
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .bottom)) {
             ComicImageView(comicNum: comicNum)
+            
+//            if refresher.needsToRefresh {
+//                EmptyView()
+//                    .frame(width: 0, height: 0)
+//            }
+            
+//            if let comicImage = comicImageModelView.image {
+//                comicImage
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//            }
+//            else {
+//                ProgressView()
+//                    .task {
+//                        await comicImageModelView.load(comicNum)
+//                    }
+//            }
             
             Text(comicNum.description)
                 .font(.subheadline)
@@ -24,6 +53,11 @@ struct ComicCollectionViewCellView: View {
                     
                 }
                 .padding(5) // Padding for capsule within zstack
+        }
+        .overlay {
+            Rectangle()
+                .stroke(style: StrokeStyle(lineWidth: 2.0))
+                .foregroundColor(.gray)
         }
     }
 }
@@ -54,6 +88,11 @@ class UIComicCollectionViewCell: UICollectionViewCell {
         backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
+        
+//        More Things I've Tried:
+//        NSLayoutConstraint.deactivate(hostingController.view.constraints)
+//        hostingController.view.removeConstraints(hostingController.view.constraints)
+        
         addSubview(hostingController.view)
         
         NSLayoutConstraint.activate([
@@ -62,5 +101,22 @@ class UIComicCollectionViewCell: UICollectionViewCell {
             hostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+        
+        hostingController.view.invalidateIntrinsicContentSize()
+        
+//        print("self.gestureRecognizers: \(self.gestureRecognizers)")
+//        print("self.contentView.gestureRecognizers: \(self.contentView.gestureRecognizers)")
+//        print("hostingController.view.gestureRecognizers: \(hostingController.view.gestureRecognizers)")
+        
+//        Things I've Tried:
+//        hostingController.view.setNeedsLayout()
+//|       guard let collectionViewCellView = hostingController.rootView as? ComicCollectionViewCellView
+//|       else {
+//|           return
+//|       }
+//|       collectionViewCellView.refresher.needsToRefresh.toggle()
+//        self.setNeedsDisplay()
+//|       hostingController.view.setNeedsLayout()
+//|       hostingController.view.layoutIfNeeded()
     }
 }

@@ -29,9 +29,10 @@ class UIComicCollectionViewController: UICollectionViewController {
         let layout: UIComicCollectionViewLayout = UIComicCollectionViewLayout()
         layout.settings = UIComicCollectionViewLayout.Settings(numColumns: 2)
         
-        // Remove old, default collection view from super view
-        // before adding new one
-        collectionView.removeFromSuperview()
+//        // TODO(Adin): Is this needed?
+//        // Remove old, default collection view from super view
+//        // before adding new one
+//        collectionView.removeFromSuperview()
         
         collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -45,21 +46,17 @@ class UIComicCollectionViewController: UICollectionViewController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
         }
         
+        applyTestSnapshot()
+        
         collectionView.dataSource = dataSource
         
         self.view.addSubview(collectionView)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        applyTestSnapshot()
     }
     
     private func cellRegistrationHandler(_ cell: Cell, _ indexPath: IndexPath, _ itemIdentifier: Int) {
         for subview in cell.subviews {
             subview.removeFromSuperview()
         }
-
-//        print("indexPath.item: \(indexPath.item), indexPath.row: \(indexPath.row), itemIdentifier: \(itemIdentifier)")
 
         cell.host(UIHostingController(rootView: ComicCollectionViewCellView(comicNum: itemIdentifier)))
     }
