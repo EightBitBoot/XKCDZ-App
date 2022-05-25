@@ -46,6 +46,7 @@ struct ComicLoader {
     }
     
     static func getComicImageData(imgAddress: String) async throws -> Data {
+#if true
         if let fileExtensionPeriodLocation = imgAddress.lastIndex(of: ".") {
             // There is at least one period in imgAddress
             let fullResAddress = imgAddress[imgAddress.startIndex..<fileExtensionPeriodLocation] + "_2x" + imgAddress[fileExtensionPeriodLocation..<imgAddress.endIndex]
@@ -54,6 +55,7 @@ struct ComicLoader {
                 return fullResGetResult.0
             }
         }
+#endif
         
         // Fallback to the 1x image url and response
         let getResult: (Data, HTTPURLResponse) = try await httpGetRequest(imgAddress)

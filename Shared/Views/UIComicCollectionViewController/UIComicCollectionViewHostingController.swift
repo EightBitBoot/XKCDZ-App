@@ -20,5 +20,4 @@ struct UIComicCollectionViewControllerRepresentable: UIViewControllerRepresentab
     
     static func dismantleUIViewController(_ uiViewController: UIComicCollectionViewController, coordinator: Coordinator) {
     }
-    
 }

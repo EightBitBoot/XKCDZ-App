@@ -43,20 +43,31 @@ class CacheComicMetadata {
 }
 
 class CacheComicImage {
-    let image: Image
+    let image: UIImage
     let ratio: Float
     
-    init(image: Image, ratio: Float) {
+    init(image: UIImage, ratio: Float) {
         self.image = image
         self.ratio = ratio
     }
 }
 
-class ComicStore {
+struct ComicStore {
     private static let metadataCache: NSCache<CacheKey, CacheComicMetadata> = NSCache()
     private static let imageCache: NSCache<CacheKey, CacheComicImage> = NSCache()
     
+    private init() {}
+    
     static func getMetadata(_ comicNum: Int) async -> ComicMetadata? {
+        // TODO(Adin): This is hacky: make the multithreading better
+        // Wrapping this in a Task ensures it happens on a background thread
+        return await Task {
+                         await ComicStore.getMetadataImpl(comicNum)
+                     }
+                     .value
+    }
+    
+    static private func getMetadataImpl(_ comicNum: Int) async -> ComicMetadata? {
         if let cachedMetadata = metadataCache.object(forKey: CacheKey(num: comicNum))?.comicMetadata {
             return cachedMetadata
         }
@@ -88,7 +99,16 @@ class ComicStore {
         return PersistenceProvider.default.getLatestStoredMetadataBlocking()
     }
     
-    static func getComicImage(_ comicNum: Int) async -> Image? {
+    static func getComicImage(_ comicNum: Int) async -> UIImage? {
+        // TODO(Adin): This is hacky: make the multithreading better
+        // Wrapping this in a Task ensures it happens on a background thread
+        return await Task {
+                         await ComicStore.getComicImageImpl(comicNum)
+                     }
+                     .value
+    }
+    
+    static private func getComicImageImpl(_ comicNum: Int) async -> UIImage? {
         if let cachedImage = imageCache.object(forKey: CacheKey(num: comicNum)) {
             return cachedImage.image
         }
@@ -101,7 +121,7 @@ class ComicStore {
         
         if let storedImage = await PersistenceProvider.default.getComicImageData(comicMetadata: comicMetadata) {
             // TODO(Adin): Check for failed UIImage creation
-            let image: Image = Image(uiImage: UIImage(data: storedImage.data)!)
+            let image: UIImage = UIImage(data: storedImage.data)!
             imageCache.setObject(CacheComicImage(image: image, ratio: storedImage.ratio), forKey: CacheKey(num: comicNum))
             return image
         }
@@ -119,9 +139,8 @@ class ComicStore {
         
         await PersistenceProvider.default.storeComicImage(comicMetadata: comicMetadata, comicImage: createdComicImage)
         
-        let newSwiftUIImage = Image(uiImage: newUIKitImage)
-        imageCache.setObject(CacheComicImage(image: newSwiftUIImage, ratio: Float(ratio)), forKey: CacheKey(num: comicNum))
-        return newSwiftUIImage
+        imageCache.setObject(CacheComicImage(image: newUIKitImage, ratio: Float(ratio)), forKey: CacheKey(num: comicNum))
+        return newUIKitImage
     }
     
     static func getImageRatio(_ comicNum: Int) async -> Float? {

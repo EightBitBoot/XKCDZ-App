@@ -84,39 +84,52 @@ struct UIComicCollectionView_Previews: PreviewProvider {
 }
 
 class UIComicCollectionViewCell: UICollectionViewCell {
-    func host<Content: View>(_ hostingController: UIHostingController<Content>) {
-        backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        hostingController.view.backgroundColor = .clear
+    var comicImageView: UIImageView = UIImageView()
+    var comicNumLabel: UILabel = UILabel()
+    
+    var currentComicNum: Int?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.clipsToBounds = true
+        // This appears to be the default value but apple's example sets this explicitly
+        self.autoresizesSubviews = true
+        self.backgroundColor = .lightGray
         
-//        More Things I've Tried:
-//        NSLayoutConstraint.deactivate(hostingController.view.constraints)
-//        hostingController.view.removeConstraints(hostingController.view.constraints)
+        comicImageView.frame = self.bounds
+        comicImageView.contentMode = .scaleAspectFill
+        comicImageView.clipsToBounds = true
+        comicImageView.translatesAutoresizingMaskIntoConstraints = false
+        comicImageView.backgroundColor = .clear
         
-        addSubview(hostingController.view)
+        self.addSubview(comicImageView)
         
         NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: topAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor)
+            comicImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+            comicImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -2),
+            comicImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 2),
+            comicImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -2)
         ])
         
-        hostingController.view.invalidateIntrinsicContentSize()
         
-//        print("self.gestureRecognizers: \(self.gestureRecognizers)")
-//        print("self.contentView.gestureRecognizers: \(self.contentView.gestureRecognizers)")
-//        print("hostingController.view.gestureRecognizers: \(hostingController.view.gestureRecognizers)")
+        comicNumLabel.translatesAutoresizingMaskIntoConstraints = false
+        comicNumLabel.backgroundColor = .gray
         
-//        Things I've Tried:
-//        hostingController.view.setNeedsLayout()
-//|       guard let collectionViewCellView = hostingController.rootView as? ComicCollectionViewCellView
-//|       else {
-//|           return
-//|       }
-//|       collectionViewCellView.refresher.needsToRefresh.toggle()
-//        self.setNeedsDisplay()
-//|       hostingController.view.setNeedsLayout()
-//|       hostingController.view.layoutIfNeeded()
+        comicImageView.addSubview(comicNumLabel)
+        
+        NSLayoutConstraint.activate([
+            comicNumLabel.rightAnchor.constraint(equalTo: comicImageView.rightAnchor, constant: -4),
+            comicNumLabel.bottomAnchor.constraint(equalTo: comicImageView.bottomAnchor, constant: -4)
+        ])
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) isn't implemented")
+    }
+    
+    override func prepareForReuse() {
+        currentComicNum = nil
+        comicImageView.image = nil
+        comicNumLabel.text = nil
     }
 }

@@ -54,11 +54,33 @@ class UIComicCollectionViewController: UICollectionViewController {
     }
     
     private func cellRegistrationHandler(_ cell: Cell, _ indexPath: IndexPath, _ itemIdentifier: Int) {
-        for subview in cell.subviews {
-            subview.removeFromSuperview()
+        cell.currentComicNum = itemIdentifier
+        
+        // Keep a weak reference to cell so the closures won't keep
+        // cell loaded if the CollectionView is unloaded before
+        // they finish
+        weak var weakCell = cell
+        
+        Task {
+            guard weakCell != nil,
+                  let comicImage = await ComicStore.getComicImage(itemIdentifier)
+            else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                guard let cell = weakCell,
+                      let cellComicNum = cell.currentComicNum
+                else {
+                    return
+                }
+                
+                if cellComicNum == itemIdentifier {
+                    cell.comicImageView.image = comicImage
+                    cell.comicNumLabel.text = itemIdentifier.description
+                }
+            }
         }
-
-        cell.host(UIHostingController(rootView: ComicCollectionViewCellView(comicNum: itemIdentifier)))
     }
     
     private func applyTestSnapshot() {

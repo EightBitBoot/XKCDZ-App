@@ -215,7 +215,7 @@ extension UIComicCollectionViewLayout {
         private var verticalItemSpacing_val: CGFloat? = nil
         private var numColumns_val: Int? = nil
         
-        static let `default` = Settings(horizontalColumnInset: 10.0, verticalColumnInset: 10.0, horizontalColumnSpacing: 15.0, verticalItemSpacing: 10.0, numColumns: 1)
+        static let `default` = Settings(horizontalColumnInset: 10.0, verticalColumnInset: 10.0, horizontalColumnSpacing: 10.0, verticalItemSpacing: 10.0, numColumns: 1)
         
         init(horizontalColumnInset: CGFloat? = nil, verticalColumnInset: CGFloat? = nil, horizontalColumnSpacing: CGFloat? = nil, verticalItemSpacing: CGFloat? = nil, numColumns: Int? = nil) {
             self.horizontalColumnInset_val = horizontalColumnInset
