@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="StoredComicMetadata" representedClassName="StoredComicMetadata" syncable="YES" codeGenerationType="category">
+        <attribute name="alt_text" attributeType="String"/>
+        <attribute name="comic_num" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date_published" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="external_link" attributeType="String"/>
+        <attribute name="extra_parts_headerextra" optional="YES" attributeType="String"/>
+        <attribute name="extra_parts_inset" optional="YES" attributeType="String"/>
+        <attribute name="img_link" attributeType="String"/>
+        <attribute name="img_ratio" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="news" attributeType="String"/>
+        <attribute name="safe_title" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="transcript" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="StoredComicMetadata" positionX="-63" positionY="-18" width="128" height="209"/>
+    </elements>
+</model>
