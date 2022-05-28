@@ -16,20 +16,20 @@ actor ComicFetcher {
         configuration.waitsForConnectivity = false
         return URLSession(configuration: configuration)
     }()
-    private var runningMetadataFetchTasks: [Int:Task<ComicMetadata?,Never>] = [:]
-    private var runningComicImageFetchTasks: [ComicImageFetchSpec:Task<Data?,Never>] = [:]
+    private var runningMetadataFetchTasks: [Int:Task<ComicMetadata,Error>] = [:]
+    private var runningComicImageFetchTasks: [ComicImageRequest:Task<Data,Error>] = [:]
     
     private init() {}
     
-    func fetchComicMetadata(for comicNum: Int = 0) async -> ComicMetadata? {
+    func fetchComicMetadata(for comicNum: Int = 0) async throws -> ComicMetadata {
         // NOTE(Adin): A comicNum of 0 fetches the latest metadata
-        let fetchedMetadata: ComicMetadata?
+        let fetchedMetadata: ComicMetadata
         
         if let cachedTask = runningMetadataFetchTasks[comicNum] {
-            fetchedMetadata = await cachedTask.value
+            fetchedMetadata = try await cachedTask.value
         }
         else {
-            let newTask = Task { () -> ComicMetadata? in
+            let newTask = Task { () -> ComicMetadata in
                 defer {
                     runningMetadataFetchTasks[comicNum] = nil
                 }
@@ -37,85 +37,77 @@ actor ComicFetcher {
                 let comicNumStr = comicNum == 0 ? "" : comicNum.description
                 guard let metadtaUrl = URL(string: "\(comicNumStr)/info.0.json", relativeTo: ComicFetcher.xkcdBaseUrl)
                 else {
-                    return nil
+                    throw FetchError.InvalidUrlConstruction
                 }
                 
-                guard let (responseData, _) = try? await performHttpRequest(from: metadtaUrl),
-                      !Task.isCancelled
-                else {
-                    return nil
-                }
+                let (responseData, _) = try await performHttpRequest(from: metadtaUrl)
+                try Task.checkCancellation()
                 
-                return try? JSONDecoder().decode(ComicMetadata.self, from: responseData)
+                return try JSONDecoder().decode(ComicMetadata.self, from: responseData)
             }
             
             runningMetadataFetchTasks[comicNum] = newTask
-            fetchedMetadata = await newTask.value
+            fetchedMetadata = try await newTask.value
         }
         
         return fetchedMetadata
     }
     
-    func fetchComicImageData(for comicMetadata: ComicMetadata, ofSize imgSize: ComicImageSize = .Default) async -> Data? {
-        let fetchedImageData: Data?
+    func fetchComicImageData(for imgRequest: ComicImageRequest) async throws -> Data {
+        let fetchedImageData: Data
         
-        guard comicMetadata.imgFileType != .Unknown
+        guard imgRequest.comicMetadata.imgFileType != .Unknown
         else {
-            return nil
+            throw FetchError.InvalidComicImageFileType
         }
         
-        let fetchSpec = ComicImageFetchSpec(comicMetadata: comicMetadata, imgSize: imgSize)
-        
-        if let cachedTask = runningComicImageFetchTasks[fetchSpec] {
-            fetchedImageData = await cachedTask.value
+        if let cachedTask = runningComicImageFetchTasks[imgRequest] {
+            fetchedImageData = try await cachedTask.value
         }
         else {
-            let newTask = Task { () -> Data? in
+            let newTask = Task { () -> Data in
                 defer {
-                    runningComicImageFetchTasks[fetchSpec] = nil
+                    runningComicImageFetchTasks[imgRequest] = nil
                 }
                 
                 let fetchAddr: String
                 
-                if fetchSpec.imgSize == .Large {
-                    guard let lastPeriodIndex = comicMetadata.imgLink.lastIndex(of: ".")
+                if imgRequest.imgSize == .Large {
+                    guard let lastPeriodIndex = imgRequest.comicMetadata.imgLink.lastIndex(of: ".")
                     else {
-                        return nil
+                        throw FetchError.InvalidComicImageLink
                     }
                     
-                    fetchAddr = comicMetadata.imgLink[comicMetadata.imgLink.indices.first!..<lastPeriodIndex] + "_2x" +
-                                    comicMetadata.imgLink[lastPeriodIndex...comicMetadata.imgLink.indices.last!]
+                    fetchAddr = imgRequest.comicMetadata.imgLink[imgRequest.comicMetadata.imgLink.indices.first!..<lastPeriodIndex] + "_2x" +
+                                imgRequest.comicMetadata.imgLink[lastPeriodIndex...imgRequest.comicMetadata.imgLink.indices.last!]
                 }
                 else {
-                    fetchAddr = comicMetadata.imgLink
+                    fetchAddr = imgRequest.comicMetadata.imgLink
                 }
                 
                 guard let imgUrl = URL(string: fetchAddr)
                 else {
-                    return nil
+                    throw FetchError.InvalidUrlConstruction
                 }
                 
-                guard let (responseData, _) = try? await performHttpRequest(from: imgUrl)
-                else {
-                    return nil
-                }
+                let (responseData, _) = try await performHttpRequest(from: imgUrl)
                 
                 return responseData
             }
             
-            runningComicImageFetchTasks[fetchSpec] = newTask
-            fetchedImageData = await newTask.value
+            runningComicImageFetchTasks[imgRequest] = newTask
+            fetchedImageData = try await newTask.value
         }
         
         return fetchedImageData
     }
     
-    private func performHttpRequest(from url: URL) async throws -> (Data, HTTPURLResponse)? {
+    private func performHttpRequest(from url: URL) async throws -> (Data, HTTPURLResponse) {
         let (data, urlResponse) = try await urlSession.data(from: url)
         
         guard let httpUrlResponse = urlResponse as? HTTPURLResponse
         else {
-            return nil
+            throw FetchError.NotAHttpResponse
         }
         
         switch(httpUrlResponse.statusCode) {
@@ -140,6 +132,13 @@ actor ComicFetcher {
     }
 }
 
+enum FetchError: Error {
+    case InvalidUrlConstruction
+    case InvalidComicImageLink
+    case InvalidComicImageFileType
+    case NotAHttpResponse
+}
+
 enum HTTPError: Error {
     case ServerReturnedInformation(Int)
     case ServerReturnedRedirection(Int)
@@ -147,7 +146,3 @@ enum HTTPError: Error {
     case ServerReturnedServerError(Int)
 }
 
-private struct ComicImageFetchSpec: Hashable {
-    let comicMetadata: ComicMetadata
-    let imgSize: ComicImageSize
-}

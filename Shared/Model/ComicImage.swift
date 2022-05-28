@@ -43,3 +43,13 @@ enum ComicImageFileFormat: String {
         }
     }
 }
+
+struct ComicImageRequest: Hashable {
+    let comicMetadata: ComicMetadata
+    let imgSize: ComicImageSize
+    
+    init(for comicMetadata: ComicMetadata, ofSize imgSize: ComicImageSize = .Default) {
+        self.comicMetadata = comicMetadata
+        self.imgSize = imgSize
+    }
+}
