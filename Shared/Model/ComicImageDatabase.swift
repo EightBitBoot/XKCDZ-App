@@ -39,8 +39,12 @@ actor ComicImageDatabase {
     
     func storeComicImage(of imgRequest: ComicImageRequest, withContents imgData: Data) async throws {
         if await hasComicImage(of: imgRequest) {
+            // hasComicImage(of:) already awaits any running store
+            // tasks for the current imgRequest so no additional
+            // waiting is required
+            
             // Avoid duplicates
-            return
+            throw ComicImageDatabaseError.ImageAlreadyStored
         }
         
         let newTask = Task {
@@ -75,6 +79,10 @@ actor ComicImageDatabase {
         runningGetTasks[imgRequest] = newTask
         return try await newTask.value
     }
+}
+
+enum ComicImageDatabaseError: Error {
+    case ImageAlreadyStored
 }
 
 private extension ComicImageRequest {

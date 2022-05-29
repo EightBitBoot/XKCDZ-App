@@ -103,6 +103,8 @@ private extension ComicMetadata {
         self.transcript = transcript
         self.extraParts = extraParts
         self.imgRatio = imgRatio
+        
+        self.imgFileType = ComicImageFileFormat.fromFilePath(self.imgLink)
     }
     
 }
