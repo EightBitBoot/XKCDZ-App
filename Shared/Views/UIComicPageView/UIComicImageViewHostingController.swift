@@ -18,7 +18,7 @@ struct ComicImageWithAltView: View {
     let comicNum: Int
     
     var body: some View {
-        let altText = metadataModelView.comicMetadata == nil ? "Alt text loading.\nTry again later." : metadataModelView.comicMetadata!.alt
+        let altText = metadataModelView.comicMetadata == nil ? "Alt text loading.\nTry again later." : metadataModelView.comicMetadata!.altText
         
         ComicImageView(comicNum: comicNum)
             .task {

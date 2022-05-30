@@ -85,7 +85,7 @@ enum ComicImageDatabaseError: Error {
     case ImageAlreadyStored
 }
 
-private extension ComicImageRequest {
+extension ComicImageRequest {
     var dirUrl: URL {
         return URL(fileURLWithPath: "\(imgCachePath)/\(comicMetadata.comicNum)", isDirectory: true)
     }

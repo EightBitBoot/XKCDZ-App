@@ -21,7 +21,7 @@ actor ComicFetcher {
     
     private init() {}
     
-    func fetchComicMetadata(for comicNum: Int = 0) async throws -> ComicMetadata {
+    func fetchComicMetadata(for comicNum: Int) async throws -> ComicMetadata {
         // NOTE(Adin): A comicNum of 0 fetches the latest metadata
         let fetchedMetadata: ComicMetadata
         

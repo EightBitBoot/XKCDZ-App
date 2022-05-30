@@ -60,21 +60,21 @@ class UIComicCollectionViewController: UICollectionViewController {
         // cell loaded if the CollectionView is unloaded before
         // they finish
         weak var weakCell = cell
-        
+
         Task {
             guard weakCell != nil,
-                  let comicImage = await ComicStore.getComicImage(itemIdentifier)
+                  let comicImage = await ComicStore.shared.getComicImage(for: itemIdentifier, ofSize: .Default)
             else {
                 return
             }
-            
+
             DispatchQueue.main.async {
                 guard let cell = weakCell,
                       let cellComicNum = cell.currentComicNum
                 else {
                     return
                 }
-                
+
                 if cellComicNum == itemIdentifier {
                     cell.comicImageView.image = comicImage
                     cell.comicNumLabel.text = itemIdentifier.description
@@ -88,7 +88,7 @@ class UIComicCollectionViewController: UICollectionViewController {
         
         snapshot.appendSections([0])
         // TODO(Adin): This crashes if the ComicStore is empty
-        snapshot.appendItems([Int]((1...ComicStore.getLatestStoredMetadataBlocking()!.num).reversed()))
+        snapshot.appendItems([Int]((1...ComicStore.shared.getStoredComicMetadata()!.comicNum).reversed()))
         
         dataSource.apply(snapshot)
     }

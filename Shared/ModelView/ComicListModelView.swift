@@ -13,16 +13,16 @@ class ComicListModelView: ObservableObject {
     
     @MainActor
     func loadLatestComicNum() async {
-        if let latestComicMetadata = await ComicStore.getLatestStoredMetadata() {
-            latestComicNum = Int(latestComicMetadata.num)
+        if let latestComicMetadata = await ComicStore.shared.getComicMetadata() {
+            latestComicNum = latestComicMetadata.comicNum
         }
         else {
             // No comics stored in store
             
-            await ComicStore.refreshComicStore()
+            await ComicStore.shared.refreshComicStore()
             // TODO(Adin): This nested if is ugly: fix it
-            if let newLatestComicMetadata = await ComicStore.getLatestStoredMetadata() {
-                latestComicNum = Int(newLatestComicMetadata.num)
+            if let newLatestComicMetadata = await ComicStore.shared.getComicMetadata() {
+                latestComicNum = newLatestComicMetadata.comicNum
             }
             else {
                 // TODO(Adin): This doesn't need to be a fatal error
@@ -32,7 +32,7 @@ class ComicListModelView: ObservableObject {
     }
     
     func refresh() async {
-        await ComicStore.refreshComicStore()
+        await ComicStore.shared.refreshComicStore()
         await loadLatestComicNum()
     }
 }

@@ -48,7 +48,7 @@ struct ComicImageRequest: Hashable {
     let comicMetadata: ComicMetadata
     let imgSize: ComicImageSize
     
-    init(for comicMetadata: ComicMetadata, ofSize imgSize: ComicImageSize = .Default) {
+    init(for comicMetadata: ComicMetadata, ofSize imgSize: ComicImageSize) {
         self.comicMetadata = comicMetadata
         self.imgSize = imgSize
     }

@@ -12,7 +12,7 @@ class ComicMetadataModelView: ObservableObject {
     
     @MainActor
     func load(_ comicNum: Int) async {
-        if let comicMetadata = await ComicStore.getMetadata(comicNum) {
+        if let comicMetadata = await ComicStore.shared.getComicMetadata(for: comicNum) {
             self.comicMetadata = comicMetadata
         }
     }

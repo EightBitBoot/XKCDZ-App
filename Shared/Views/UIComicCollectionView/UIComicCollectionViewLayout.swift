@@ -71,7 +71,7 @@ class UIComicCollectionViewLayout: UICollectionViewLayout {
             columnMembers[columnIndex].removeAll()
         }
         
-        ratiosCache = ComicStore.getAllImageRatiosBlocking()
+        ratiosCache = ComicStore.shared.getAllStoredRatios()
         
         // Total width of all horizontal empty space (insets, and column spacings)
         let horizontalEmptySpace = (2 * settings.horizontalColumnInset) + (settings.horizontalColumnSpacing * CGFloat(settings.numColumns - 1))

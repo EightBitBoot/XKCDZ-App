@@ -14,7 +14,7 @@ struct ComicFullscreenView: View {
     @State var currentComicNum: Int
     
     var body: some View {
-        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? currentComicNum.description : "\(currentComicNum.description) - \(comicMetadataModelView.comicMetadata!.safe_title)"
+        let navigationTitle: String = comicMetadataModelView.comicMetadata == nil ? currentComicNum.description : "\(currentComicNum.description) - \(comicMetadataModelView.comicMetadata!.safeTitle)"
         
         UIComicPageViewControllerRepresentatble(currentComicNum: $currentComicNum)
             .navigationTitle(navigationTitle)

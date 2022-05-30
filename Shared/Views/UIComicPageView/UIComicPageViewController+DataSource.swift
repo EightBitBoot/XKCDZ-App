@@ -14,7 +14,7 @@ extension UIComicPageViewController: UIPageViewControllerDataSource {
             return nil
         }
         
-        let latestComicNum: Int = ComicStore.getLatestStoredMetadataBlocking()?.num ?? 0
+        let latestComicNum: Int = (ComicStore.shared.getStoredComicMetadata()?.comicNum) ?? 0
         
         if viewController.comicNum + 1 <= latestComicNum {
             return UIComicImageViewHostingController(comicNum: viewController.comicNum + 1)

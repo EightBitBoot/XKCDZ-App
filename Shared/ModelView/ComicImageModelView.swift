@@ -13,8 +13,8 @@ class ComicImageModelView: ObservableObject {
     @Published public private(set) var image: Image? = nil
     @Published public private(set) var errorLoading: Bool = false
     
-    func load(_ comicNum: Int) async {
-        if let loadedImage = await ComicStore.getComicImage(comicNum) {
+    func load(_ comicNum: Int, size: ComicImageSize = .Default) async {
+        if let loadedImage = await ComicStore.shared.getComicImage(for: comicNum, ofSize: size) {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self
                 else {
