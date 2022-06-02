@@ -17,7 +17,7 @@ final class ComicStore {
     
     private init() {}
     
-    private var comicImageCache: NSCache<CacheKey, UIImage> = NSCache()
+//    private var comicImageCache: NSCache<CacheKey, UIImage> = NSCache()
     
     func getComicMetadata(for comicNum: Int = 0) async -> ComicMetadata? {
         // A comicNum of 0 gets the latest metadata
@@ -52,19 +52,19 @@ final class ComicStore {
 
         let imgRequest = ComicImageRequest(for: metadata, ofSize: imgSize)
         
-        // First check the cache
-        let cachedImage = comicImageCache.object(forKey: CacheKey(imgRequest))
-        if let cachedImage = cachedImage {
-            return cachedImage
-        }
+//        // First check the cache
+//        let cachedImage = comicImageCache.object(forKey: CacheKey(imgRequest))
+//        if let cachedImage = cachedImage {
+//            return cachedImage
+//        }
         
         // Next, (if that fails) check the persistent store
         let storedImage = try? await ComicImageDatabase.shared.getComicImage(of: imgRequest)
         if let storedImage = storedImage {
             let newUIImage = UIImage(data: storedImage)
-            if let newUIImage = newUIImage {
-                comicImageCache.setObject(newUIImage, forKey: CacheKey(imgRequest))
-            }
+//            if let newUIImage = newUIImage {
+//                comicImageCache.setObject(newUIImage, forKey: CacheKey(imgRequest))
+//            }
             
             return newUIImage
         }
@@ -76,14 +76,24 @@ final class ComicStore {
             
             let newUIImage = UIImage(data: fetchedImage)
             // TODO(Adin): Store the image ratio in the persistent store
-            if let newUIImage = newUIImage {
-                comicImageCache.setObject(newUIImage, forKey: CacheKey(imgRequest))
-            }
+//            if let newUIImage = newUIImage {
+//                comicImageCache.setObject(newUIImage, forKey: CacheKey(imgRequest))
+//            }
             
             return newUIImage
         }
         
         return nil
+    }
+    
+    // Convenience function to get the largest comic image as some comics
+    // don't have .Large (_2x) images
+    func getLargestComicImage(for comicNum: Int) async -> UIImage? {
+        if let largeImage = await getComicImage(for: comicNum, ofSize: .Large) {
+            return largeImage
+        }
+        
+        return await getComicImage(for: comicNum, ofSize: .Default)
     }
     
     // Passthrough function needed for the ComicCollectionViewLayout

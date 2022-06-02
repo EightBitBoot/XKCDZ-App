@@ -104,7 +104,7 @@ final class PersistenceProvider {
         let fetchRequest = StoredComicMetadata.fetchRequest()
         fetchRequest.propertiesToFetch = ["comic_num", "img_ratio"]
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.predicate = NSPredicate(format: "%K != 0", #keyPath(StoredComicMetadata.img_ratio))
+        fetchRequest.predicate = NSPredicate(format: "%K != 0.0", #keyPath(StoredComicMetadata.img_ratio))
         
         var result: [Int:Float] = [:]
         try context.performAndWait { [weak self] in
@@ -115,9 +115,9 @@ final class PersistenceProvider {
             
             let fetchResult = try self.context.fetch(fetchRequest)
             
-            fetchResult.forEach {
-                result[Int($0.comic_num)] = $0.img_ratio
-            }
+            result = Dictionary(uniqueKeysWithValues: fetchResult.map {
+                return (Int($0.comic_num), $0.img_ratio)
+            })
         }
         
         return result

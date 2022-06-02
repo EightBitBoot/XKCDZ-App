@@ -8,10 +8,12 @@
 import Foundation
 
 // Needss to be at a file level for both ComicImageDatabase and ComicImageRequest+Url
-fileprivate let imgCachePath: String = "\(NSHomeDirectory())/Library/Caches/ComicImages"
     
 actor ComicImageDatabase {
     static let shared: ComicImageDatabase = ComicImageDatabase()
+    
+    let imgCacheUrl: URL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        .appendingPathComponent("ComicImages", isDirectory: true)
     
     private var runningStoreTasks: [ComicImageRequest:Task<(),Error>] = [:]
     private var runningGetTasks: [ComicImageRequest:Task<Data,Error>] = [:]
@@ -87,10 +89,10 @@ enum ComicImageDatabaseError: Error {
 
 extension ComicImageRequest {
     var dirUrl: URL {
-        return URL(fileURLWithPath: "\(imgCachePath)/\(comicMetadata.comicNum)", isDirectory: true)
+        return ComicImageDatabase.shared.imgCacheUrl.appendingPathComponent(comicMetadata.comicNum.description, isDirectory: true)
     }
     
     var fileUrl: URL {
-        return URL(fileURLWithPath: "\(imgSize.rawValue)\(comicMetadata.imgFileType.rawValue)", isDirectory: false, relativeTo: dirUrl)
+        return dirUrl.appendingPathComponent("\(imgSize.rawValue)\(comicMetadata.imgFileType.rawValue)", isDirectory: false)
     }
 }

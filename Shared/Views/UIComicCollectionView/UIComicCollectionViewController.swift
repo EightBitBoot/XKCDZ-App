@@ -55,6 +55,7 @@ class UIComicCollectionViewController: UICollectionViewController {
     
     private func cellRegistrationHandler(_ cell: Cell, _ indexPath: IndexPath, _ itemIdentifier: Int) {
         cell.currentComicNum = itemIdentifier
+        cell.comicNumLabel.text = itemIdentifier.description
         
         // Keep a weak reference to cell so the closures won't keep
         // cell loaded if the CollectionView is unloaded before
@@ -63,7 +64,8 @@ class UIComicCollectionViewController: UICollectionViewController {
 
         Task {
             guard weakCell != nil,
-                  let comicImage = await ComicStore.shared.getComicImage(for: itemIdentifier, ofSize: .Default)
+                  let comicImage = await ComicStore.shared.getLargestComicImage(for: itemIdentifier),
+                  let thumbnailImage = await comicImage.byPreparingThumbnail(ofSize: comicImage.pixelSize)
             else {
                 return
             }
@@ -76,8 +78,7 @@ class UIComicCollectionViewController: UICollectionViewController {
                 }
 
                 if cellComicNum == itemIdentifier {
-                    cell.comicImageView.image = comicImage
-                    cell.comicNumLabel.text = itemIdentifier.description
+                    cell.comicImageView.image = thumbnailImage
                 }
             }
         }
@@ -91,5 +92,11 @@ class UIComicCollectionViewController: UICollectionViewController {
         snapshot.appendItems([Int]((1...ComicStore.shared.getStoredComicMetadata()!.comicNum).reversed()))
         
         dataSource.apply(snapshot)
+    }
+}
+
+private extension UIImage {
+    var pixelSize: CGSize {
+        CGSize(width: size.width * scale, height: size.height * scale)
     }
 }

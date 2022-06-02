@@ -22,7 +22,7 @@ class UIComicCollectionViewCell: UICollectionViewCell {
         self.backgroundColor = .lightGray
         
         comicImageView.frame = self.bounds
-        comicImageView.contentMode = .scaleAspectFill
+        comicImageView.contentMode = .scaleAspectFit
         comicImageView.clipsToBounds = true
         comicImageView.translatesAutoresizingMaskIntoConstraints = false
         comicImageView.backgroundColor = .clear
