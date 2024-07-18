@@ -17,6 +17,8 @@ class ComicsCollectionViewController: UICollectionViewController {
     private var dataSource: DataSource!
     private var comicMetas: Results<ComicMeta>!
     
+    private var refreshControl: UIRefreshControl!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,6 +35,10 @@ class ComicsCollectionViewController: UICollectionViewController {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 200, height: 200)
         collectionView.collectionViewLayout = layout
+        
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshComics), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
         
         applyInitialSnapshot()
     }
@@ -110,6 +116,34 @@ class ComicsCollectionViewController: UICollectionViewController {
                 let configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
                 cell.contentConfiguration = configuration
             }
+        }
+    }
+    
+    // TODO(Adin): Stop refresh control from displaying between top comics
+    //             and keep comics below while refreshing
+    @objc func refreshComics() {
+        Task {
+            let oldLatestNum = comicMetas.last?.id ?? 1
+            do {
+                try await ComicShop.shared.downloadMeta()
+            }
+            catch {
+                print(error)
+                fatalError("Goodbye")
+            }
+            let newLatestNum = comicMetas.last?.id ?? 1
+            
+            if newLatestNum > oldLatestNum {
+                var snapshot = Snapshot()
+                snapshot.appendSections([0])
+                snapshot.appendItems(Array(stride(from: newLatestNum, to: 0, by: -1)), toSection: 0)
+                collectionView.refreshControl?.endRefreshing()
+                await dataSource.apply(snapshot, animatingDifferences: true)
+                
+                return
+            }
+            
+            collectionView.refreshControl?.endRefreshing()
         }
     }
 }
