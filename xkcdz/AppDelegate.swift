@@ -7,6 +7,15 @@
 
 import UIKit
 
+// TODO(Adin): Bump realm-swift package dependency version to
+//             (at least) 10.49.3 and change the versioning
+//             value back to "Up to Next Major Version"
+//             (unless downgrading would make more sense)
+
+// TODO(Adin): Change minimum required iOS version in xkcdz project
+//             settings to minimum actually required for all consumed
+//             apis
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

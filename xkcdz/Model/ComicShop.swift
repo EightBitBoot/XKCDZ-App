@@ -13,21 +13,25 @@ import RealmSwift
 //             use withCheckedContinuation(block:) to
 //             bridge it
 
+// TODO(Adin): Create download task map to avoid re-downloading
+//             of currently-downloading content (in downloadData(for:))
+
 // TODO(Adin):
 // struct?
 actor ComicShop {
-    
     static let shared: ComicShop = ComicShop()
 
     private init() {}
     
+    // TODO(Adin): Make this more externally readable by creating a dedicated
+    //             downloadLatestMeta() function?
     func downloadMeta(for comicNum: Int? = nil) async throws {
         let realm = try await Realm(configuration: XKCDZ_SHARED_REALM_CONFIG, actor: self)
         if comicNum != nil && realm.objects(ComicMeta.self).contains(where: {$0.id == comicNum}) {
             return
         }
         
-        let meta = try await downloadMetaInternal(for: comicNum)
+        let meta = try await downloadAndParseMeta(for: comicNum)
         if comicNum == nil && realm.objects(ComicMeta.self).contains(where: {$0.id == meta.id}) {
             return
         }
@@ -39,9 +43,6 @@ actor ComicShop {
     func getImage(for comicNum: Int, size: ImageSize = .Large) async throws -> Data {
         ensureCacheDir()
         
-        // downloadMeta(for:) checks if the meta is already saved and shorts if so
-        try await downloadMeta(for: comicNum)
-
         // ---- Try loading from filesystem ----
         let fileName   = String(describing: comicNum)
         let fileName2x = String(describing: comicNum) + "_2x"
@@ -55,12 +56,14 @@ actor ComicShop {
                 effectiveFilePath = ComicShop.CACHE_DIR_URL.appendingPathComponent(fileName2x)
         }
         
-        var fileData: Data? = nil
+        var fileData: Data?
         do {
             fileData = try Data(contentsOf: effectiveFilePath)
         }
         catch let error as NSError where error.code == Foundation.NSFileReadNoSuchFileError {
-           // GULP  
+            // GULP (this is the only error that should prompt a download:
+            //       all others should be passed up the stack)
+            fileData = nil
         }
         
         if let fileData = fileData {
@@ -71,12 +74,15 @@ actor ComicShop {
         print("Img Cache Hit: \(comicNum) \(size == .Large ? "large" : "standard") \(effectiveFilePath.lastPathComponent)")
         
         // ---- Try downloading from url ----
+        
         let realm = try! await Realm(configuration: XKCDZ_SHARED_REALM_CONFIG, actor: self)
         if !realm.objects(ComicMeta.self).contains(where: { $0.id == comicNum}) {
+            // Although downloadMeta(for:) checks whether the meta to download already exists,
+            // it is better to still check here to avoid needing to open another realm inside
+            // downloadMeta (if possible)
             try await downloadMeta(for: comicNum)
         }
         let meta = realm.objects(ComicMeta.self).first(where: { $0.id == comicNum})!
-        
         
         let imgUrl = meta.img
         
@@ -95,8 +101,6 @@ actor ComicShop {
         }
         
         let downloadedData = try await downloadData(from: effectiveUrl)
-//        let result = FileManager.default.createFile(atPath: effectiveFilePath.absoluteString, contents: downloadedData)
-//        print(result)
         print(effectiveFilePath.absoluteString)
         try downloadedData.write(to: effectiveFilePath)
         
@@ -155,7 +159,7 @@ private extension ComicShop {
         return data
     }
     
-    func downloadMetaInternal(for comicNum: Int? = nil) async throws -> ComicMeta {
+    func downloadAndParseMeta(for comicNum: Int? = nil) async throws -> ComicMeta {
         // By default, download the latest meta if no comic num is provided
         var metaUrl: URL = ComicShop.XKCD_LATEST_META_URL
         if let comicNum = comicNum {

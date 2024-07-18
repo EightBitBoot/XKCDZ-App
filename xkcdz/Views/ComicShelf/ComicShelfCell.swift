@@ -1,5 +1,5 @@
 //
-//  ComicContentView.swift
+//  ComicShelfCell.swift
 //  xkcdz
 //
 //  Created by Adin W-T on 7/10/23.
@@ -7,15 +7,19 @@
 
 import UIKit
 
-class ComicCollectionViewCell: UICollectionViewCell {
+// MARK: -- ComicShelfCell
+
+class ComicShelfCell: UICollectionViewCell {
     var comicId: Int!
     
-    func getDefaultLoadingConfiguration(for comicNum: Int) -> ComicContentViewConfiguration {
-        return ComicContentViewConfiguration(forNum: comicNum, isLoading: true)
+    func getDefaultLoadingConfiguration(for comicNum: Int) -> ComicShelfContentConfiguration {
+        return ComicShelfContentConfiguration(forNum: comicNum, isLoading: true)
     }
 }
 
-class ComicContentView: UIView, UIContentView {
+// MARK: -- ComicShelfContentView
+
+class ComicShelfContentView: UIView, UIContentView {
     private static let marginSize: CGFloat = 5.0
     
     let imageView = UIImageView()
@@ -29,8 +33,8 @@ class ComicContentView: UIView, UIContentView {
     }
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: imageView.intrinsicContentSize.width + 2 * ComicContentView.marginSize,
-                      height: imageView.intrinsicContentSize.height + 2 * ComicContentView.marginSize)
+        return CGSize(width: imageView.intrinsicContentSize.width + 2 * ComicShelfContentView.marginSize,
+                      height: imageView.intrinsicContentSize.height + 2 * ComicShelfContentView.marginSize)
     }
     
     init(_ contentConfiguration: UIContentConfiguration) {
@@ -55,18 +59,18 @@ class ComicContentView: UIView, UIContentView {
         addSubview(imageView)
         imageView.addSubview(numberLabel)
         
-        self.layoutMargins = UIEdgeInsets(top: ComicContentView.marginSize,
-                                          left: ComicContentView.marginSize,
-                                          bottom: ComicContentView.marginSize,
-                                          right: ComicContentView.marginSize)
+        self.layoutMargins = UIEdgeInsets(top: ComicShelfContentView.marginSize,
+                                          left: ComicShelfContentView.marginSize,
+                                          bottom: ComicShelfContentView.marginSize,
+                                          right: ComicShelfContentView.marginSize)
         
         imageView.topAnchor.constraint(equalTo: self.layoutMarginsGuide.topAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: self.layoutMarginsGuide.bottomAnchor).isActive = true
         imageView.leadingAnchor.constraint(equalTo: self.layoutMarginsGuide.leadingAnchor).isActive = true
         imageView.trailingAnchor.constraint(equalTo: self.layoutMarginsGuide.trailingAnchor).isActive = true
         
-        numberLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -ComicContentView.marginSize).isActive = true
-        numberLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -ComicContentView.marginSize).isActive = true
+        numberLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -ComicShelfContentView.marginSize).isActive = true
+        numberLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -ComicShelfContentView.marginSize).isActive = true
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +86,7 @@ class ComicContentView: UIView, UIContentView {
     }
     
     func configure(with configuration: UIContentConfiguration) {
-        guard let configuration = configuration as? ComicContentViewConfiguration else { return }
+        guard let configuration = configuration as? ComicShelfContentConfiguration else { return }
         
         if configuration.isLoading {
             imageView.isHidden = true
@@ -98,7 +102,9 @@ class ComicContentView: UIView, UIContentView {
     }
 }
 
-class ComicContentViewConfiguration: UIContentConfiguration {
+// MARK: -- ComicShelfContentConfiguration
+
+class ComicShelfContentConfiguration: UIContentConfiguration {
     let comicNum: Int
     let comicImage: UIImage
     let isLoading: Bool
@@ -122,7 +128,7 @@ class ComicContentViewConfiguration: UIContentConfiguration {
     }
     
     func makeContentView() -> UIView & UIContentView {
-        return ComicContentView(self)
+        return ComicShelfContentView(self)
     }
     
     func updated(for state: UIConfigurationState) -> Self {

@@ -1,5 +1,5 @@
 //
-//  ComicInfo.swift
+//  ComicMeta.swift
 //  xkcdz
 //
 //  Created by Adin W-T on 6/28/23.

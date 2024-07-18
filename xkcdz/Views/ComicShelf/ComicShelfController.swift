@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ComicShelfController.swift
 //  xkcdz
 //
 //  Created by Adin W-T on 6/11/23.
@@ -9,9 +9,9 @@ import UIKit
 import RealmSwift
 
 @MainActor
-class ComicsCollectionViewController: UICollectionViewController {
-    typealias DataSource = UICollectionViewDiffableDataSource<Int, Int>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Int>
+class ComicShelfController: UICollectionViewController {
+    private typealias DataSource = UICollectionViewDiffableDataSource<Int, Int>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Int>
     
     private var realm: Realm!
     private var dataSource: DataSource!
@@ -22,7 +22,9 @@ class ComicsCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let cellRegistration = UICollectionView.CellRegistration<ComicCollectionViewCell, Int>(handler: registrationHandler)
+        collectionView.backgroundColor = .systemBackground
+        
+        let cellRegistration = UICollectionView.CellRegistration<ComicShelfCell, Int>(handler: registrationHandler)
         
         realm = try! Realm(configuration: XKCDZ_SHARED_REALM_CONFIG)
         comicMetas = realm.objects(ComicMeta.self).sorted(by: \.id)
@@ -43,6 +45,47 @@ class ComicsCollectionViewController: UICollectionViewController {
         applyInitialSnapshot()
     }
     
+    
+    func registrationHandler(cell: UICollectionViewCell, indexPath: IndexPath, item: Int) {
+        Task { [weak self] in
+            
+            guard let cell = cell as? ComicShelfCell else { return }
+            cell.comicId = item
+            let configuration = cell.getDefaultLoadingConfiguration(for: item)
+            cell.contentConfiguration = configuration
+
+            var imageData: Data? = nil
+            do {
+                imageData = try await ComicShop.shared.getLargestImage(for: item)
+            }
+            catch ComicShop.ComicShopDownloadError.HTTPResponseCodeError(let code) where code == 403 || code == 404 {
+                if cell.comicId == item {
+                    let image = UIImage(systemName: "exclamationmark.circle.fill")!
+                    let configuration = ComicShelfContentConfiguration(forNum: item, withImage: image)
+                    cell.contentConfiguration = configuration
+                }
+            }
+            catch {
+                print(error)
+                fatalError("Goodbye")
+            }
+            
+            let image = (await UIImage(data: imageData!)?.byPreparingThumbnail(ofSize: CGSize(width: 300.0, height: 300.0)))!
+            
+            guard let _ = self else { return }
+            
+            if cell.comicId == item {
+                let configuration = ComicShelfContentConfiguration(forNum: item, withImage: image)
+                cell.contentConfiguration = configuration
+            }
+        }
+    }
+    
+}
+
+// MARK: -- extension Data Source
+
+extension ComicShelfController {
     func applyInitialSnapshot() {
         Task { [weak self] in
             var snapshot = Snapshot()
@@ -62,59 +105,6 @@ class ComicsCollectionViewController: UICollectionViewController {
             
             if let self = self {
                 await dataSource.apply(snapshot)
-            }
-        }
-    }
-    
-//    func registrationHandler(cell: UICollectionViewCell, indexPath: IndexPath, item: Int) {
-//        Task { [weak self, weak cell] in
-//            guard let self = self else {return}
-//            
-//            let localCopy = comicMetas.where {
-//                $0.id == item
-//            }
-//            if localCopy.isEmpty {
-//                // TODO(Adin): Fetch
-//            }
-//            else {
-//                guard let cell = cell else {return}
-//                let image = UIImage(systemName: "circle.filled")!
-//                // TODO(Adin): Get image instead
-//                var configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
-//            }
-//        }
-//    }
-    
-    func registrationHandler(cell: UICollectionViewCell, indexPath: IndexPath, item: Int) {
-        Task { [weak self] in
-            
-            guard let cell = cell as? ComicCollectionViewCell else { return }
-            cell.comicId = item
-            let configuration = cell.getDefaultLoadingConfiguration(for: item)
-            cell.contentConfiguration = configuration
-
-            var imageData: Data? = nil
-            do {
-                imageData = try await ComicShop.shared.getLargestImage(for: item)
-            }
-            catch ComicShop.ComicShopDownloadError.HTTPResponseCodeError(let code) where code == 403 {
-                if cell.comicId == item {
-                    let image = UIImage(systemName: "exclamationmark.circle.fill")!
-                    let configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
-                    cell.contentConfiguration = configuration
-                }
-            }
-            catch {
-                print(error)
-                fatalError("Goodbye")
-            }
-            let image = (await UIImage(data: imageData!)?.byPreparingThumbnail(ofSize: CGSize(width: 300.0, height: 300.0)))!
-            
-            guard let _ = self else { return }
-            
-            if cell.comicId == item {
-                let configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
-                cell.contentConfiguration = configuration
             }
         }
     }
@@ -148,11 +138,12 @@ class ComicsCollectionViewController: UICollectionViewController {
     }
 }
 
-extension ComicsCollectionViewController {
+// MARK: -- extension UICollectionViewDelegate
+
+extension ComicShelfController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let comicsPageViewController = ComicsPageViewController(firstComic: dataSource.itemIdentifier(for: indexPath) ?? 1)
+        let comicsPageViewController = ComicBookController(firstComic: dataSource.itemIdentifier(for: indexPath) ?? 1)
         print("IndexPath Item: \(indexPath.item)")
-//        comicsPageViewController.modalPresentationStyle = .popover
         navigationController?.pushViewController(comicsPageViewController, animated: true)
     }
 }

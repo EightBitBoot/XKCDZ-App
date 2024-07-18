@@ -1,5 +1,5 @@
 //
-//  ComicsPageViewController.swift
+//  ComicBookController.swift
 //  xkcdz
 //
 //  Created by Adin W-T on 7/17/24.
@@ -11,7 +11,7 @@ import UIKit
 import RealmSwift
 
 @MainActor
-class ComicsPageViewController: UIPageViewController {
+class ComicBookController: UIPageViewController {
     private var currentIndex: Int
     
     private var realm: Realm!
@@ -36,19 +36,21 @@ class ComicsPageViewController: UIPageViewController {
         metas = realm.objects(ComicMeta.self).sorted(by: \.id)
         
         let meta = metas.first(where: { $0.id == currentIndex})!
-        let firstView = ComicPageViewController(for: meta)
+        let firstView = ComicPageController(for: meta)
         setViewControllers([firstView], direction: .forward, animated: false)
         
         title = meta.navigationTitle
     }
 }
 
-extension ComicsPageViewController: UIPageViewControllerDataSource {
+// MARK: -- extension UIPageViewControllerDataSource
+
+extension ComicBookController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let maxComicNum = metas.last?.id ?? 1
         if currentIndex < maxComicNum {
             // TODO(Adin): Test for and download missing metas
-            return ComicPageViewController(for: metas.first(where: {$0.id == currentIndex + 1})!)
+            return ComicPageController(for: metas.first(where: {$0.id == currentIndex + 1})!)
         }
 
         return nil
@@ -57,14 +59,16 @@ extension ComicsPageViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         if currentIndex > 1 {
             // TODO(Adin): Test for and download missing metas
-            return ComicPageViewController(for: metas.first(where: {$0.id == currentIndex - 1})!)
+            return ComicPageController(for: metas.first(where: {$0.id == currentIndex - 1})!)
         }
 
         return nil
     }
 }
 
-extension ComicsPageViewController: UIPageViewControllerDelegate {
+// MARK: -- extension UIPageViewControllerDelegate
+
+extension ComicBookController: UIPageViewControllerDelegate {
     func pageViewController(
         _ pageViewController: UIPageViewController,
         didFinishAnimating finished: Bool,
@@ -74,7 +78,7 @@ extension ComicsPageViewController: UIPageViewControllerDelegate {
     {
         guard 
             completed,
-            let comicViewControllers = pageViewController.viewControllers as? [ComicPageViewController]
+            let comicViewControllers = pageViewController.viewControllers as? [ComicPageController]
         else {
             return
         }

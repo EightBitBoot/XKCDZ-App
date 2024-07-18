@@ -1,5 +1,5 @@
 //
-//  ComicPageView.swift
+//  ComicPageController.swift
 //  xkcdz
 //
 //  Created by Adin W-T on 7/17/24.
@@ -11,7 +11,7 @@ import UIKit
 // TODO(Adin): Fill out with real content
 
 @MainActor
-class ComicPageViewController: UIViewController {
+class ComicPageController: UIViewController {
     let meta: ComicMeta
     private var activityIndicator: UIActivityIndicatorView!
     private var imageView: UIImageView!
@@ -34,7 +34,7 @@ class ComicPageViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(ComicPageViewController.showAltPopup))
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(showAltPopup))
         view.addGestureRecognizer(longPressRecognizer)
         
         scrollView = UIScrollView(frame: view.bounds)
@@ -93,7 +93,7 @@ class ComicPageViewController: UIViewController {
     }
 }
 
-extension ComicPageViewController: UIScrollViewDelegate {
+extension ComicPageController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
