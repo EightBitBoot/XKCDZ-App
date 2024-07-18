@@ -8,17 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		C636A88E2A54E15100C20048 /* ContextMenuTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */; };
-		C636A8922A5C159400C20048 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C636A8912A5C159400C20048 /* Realm */; };
-		C636A8942A5C159400C20048 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C636A8932A5C159400C20048 /* RealmSwift */; };
 		C636A89B2A5C2E1200C20048 /* ComicContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C636A89A2A5C2E1200C20048 /* ComicContentView.swift */; };
+		C6624A332C48A412009F6079 /* ComicsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6624A322C48A412009F6079 /* ComicsPageViewController.swift */; };
+		C6624A352C48A4D3009F6079 /* ComicPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6624A342C48A4D3009F6079 /* ComicPageViewController.swift */; };
+		C6624A392C48EC7A009F6079 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6624A372C48EC7A009F6079 /* Main.storyboard */; };
+		C6624A3A2C48EC7A009F6079 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6624A382C48EC7A009F6079 /* LaunchScreen.storyboard */; };
+		C6624A3C2C48ED5F009F6079 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C6624A3B2C48ED5F009F6079 /* Realm */; };
+		C6624A3E2C48ED5F009F6079 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C6624A3D2C48ED5F009F6079 /* RealmSwift */; };
 		C69157262B3CD7C00078B9FA /* ComicMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69157252B3CD7C00078B9FA /* ComicMeta.swift */; };
 		C69157282B3E991C0078B9FA /* ComicShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69157272B3E991C0078B9FA /* ComicShop.swift */; };
 		C6B217B22A358CD100DB9AAD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217B12A358CD100DB9AAD /* AppDelegate.swift */; };
 		C6B217B42A358CD100DB9AAD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217B32A358CD100DB9AAD /* SceneDelegate.swift */; };
-		C6B217B62A358CD100DB9AAD /* ComicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217B52A358CD100DB9AAD /* ComicsViewController.swift */; };
-		C6B217B92A358CD100DB9AAD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B217B72A358CD100DB9AAD /* Main.storyboard */; };
+		C6B217B62A358CD100DB9AAD /* ComicsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217B52A358CD100DB9AAD /* ComicsCollectionViewController.swift */; };
 		C6B217BE2A358CD200DB9AAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6B217BD2A358CD200DB9AAD /* Assets.xcassets */; };
-		C6B217C12A358CD200DB9AAD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B217BF2A358CD200DB9AAD /* LaunchScreen.storyboard */; };
 		C6B217CC2A358CD200DB9AAD /* ComicShopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217CB2A358CD200DB9AAD /* ComicShopTests.swift */; };
 		C6B217D62A358CD200DB9AAD /* xkcdzUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217D52A358CD200DB9AAD /* xkcdzUITests.swift */; };
 		C6B217D82A358CD200DB9AAD /* xkcdzUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217D72A358CD200DB9AAD /* xkcdzUITestsLaunchTests.swift */; };
@@ -45,15 +47,17 @@
 /* Begin PBXFileReference section */
 		C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuTestViewController.swift; sourceTree = "<group>"; };
 		C636A89A2A5C2E1200C20048 /* ComicContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicContentView.swift; sourceTree = "<group>"; };
+		C6624A322C48A412009F6079 /* ComicsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicsPageViewController.swift; sourceTree = "<group>"; };
+		C6624A342C48A4D3009F6079 /* ComicPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicPageViewController.swift; sourceTree = "<group>"; };
+		C6624A372C48EC7A009F6079 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		C6624A382C48EC7A009F6079 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C69157252B3CD7C00078B9FA /* ComicMeta.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComicMeta.swift; sourceTree = "<group>"; };
 		C69157272B3E991C0078B9FA /* ComicShop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicShop.swift; sourceTree = "<group>"; };
 		C6B217AE2A358CD100DB9AAD /* xkcdz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xkcdz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6B217B12A358CD100DB9AAD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6B217B32A358CD100DB9AAD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		C6B217B52A358CD100DB9AAD /* ComicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicsViewController.swift; sourceTree = "<group>"; };
-		C6B217B82A358CD100DB9AAD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C6B217B52A358CD100DB9AAD /* ComicsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicsCollectionViewController.swift; sourceTree = "<group>"; };
 		C6B217BD2A358CD200DB9AAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C6B217C02A358CD200DB9AAD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6B217C22A358CD200DB9AAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6B217C72A358CD200DB9AAD /* xkcdzTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = xkcdzTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6B217CB2A358CD200DB9AAD /* ComicShopTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicShopTests.swift; sourceTree = "<group>"; };
@@ -68,8 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C636A8942A5C159400C20048 /* RealmSwift in Frameworks */,
-				C636A8922A5C159400C20048 /* Realm in Frameworks */,
+				C6624A3E2C48ED5F009F6079 /* RealmSwift in Frameworks */,
+				C6624A3C2C48ED5F009F6079 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,8 +98,10 @@
 			isa = PBXGroup;
 			children = (
 				C636A8992A5C2DDC00C20048 /* ComicCollectionViewCell */,
-				C6B217B52A358CD100DB9AAD /* ComicsViewController.swift */,
+				C6B217B52A358CD100DB9AAD /* ComicsCollectionViewController.swift */,
 				C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */,
+				C6624A322C48A412009F6079 /* ComicsPageViewController.swift */,
+				C6624A342C48A4D3009F6079 /* ComicPageViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -106,6 +112,15 @@
 				C636A89A2A5C2E1200C20048 /* ComicContentView.swift */,
 			);
 			path = ComicCollectionViewCell;
+			sourceTree = "<group>";
+		};
+		C645A5DF2B48895C00FC2C5D /* StoryBoards */ = {
+			isa = PBXGroup;
+			children = (
+				C6624A382C48EC7A009F6079 /* LaunchScreen.storyboard */,
+				C6624A372C48EC7A009F6079 /* Main.storyboard */,
+			);
+			path = StoryBoards;
 			sourceTree = "<group>";
 		};
 		C67DAFA62A4D176B00744B03 /* Model */ = {
@@ -140,13 +155,12 @@
 		C6B217B02A358CD100DB9AAD /* xkcdz */ = {
 			isa = PBXGroup;
 			children = (
+				C645A5DF2B48895C00FC2C5D /* StoryBoards */,
 				C636A88F2A5C12B800C20048 /* Views */,
 				C67DAFA62A4D176B00744B03 /* Model */,
 				C6B217B12A358CD100DB9AAD /* AppDelegate.swift */,
 				C6B217B32A358CD100DB9AAD /* SceneDelegate.swift */,
-				C6B217B72A358CD100DB9AAD /* Main.storyboard */,
 				C6B217BD2A358CD200DB9AAD /* Assets.xcassets */,
-				C6B217BF2A358CD200DB9AAD /* LaunchScreen.storyboard */,
 				C6B217C22A358CD200DB9AAD /* Info.plist */,
 				C6F5EAF52B44914B00965ED6 /* Globals.swift */,
 			);
@@ -187,8 +201,8 @@
 			);
 			name = xkcdz;
 			packageProductDependencies = (
-				C636A8912A5C159400C20048 /* Realm */,
-				C636A8932A5C159400C20048 /* RealmSwift */,
+				C6624A3B2C48ED5F009F6079 /* Realm */,
+				C6624A3D2C48ED5F009F6079 /* RealmSwift */,
 			);
 			productName = xkcdz;
 			productReference = C6B217AE2A358CD100DB9AAD /* xkcdz.app */;
@@ -238,7 +252,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					C6B217AD2A358CD100DB9AAD = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -281,9 +295,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B217C12A358CD200DB9AAD /* LaunchScreen.storyboard in Resources */,
 				C6B217BE2A358CD200DB9AAD /* Assets.xcassets in Resources */,
-				C6B217B92A358CD100DB9AAD /* Main.storyboard in Resources */,
+				C6624A3A2C48EC7A009F6079 /* LaunchScreen.storyboard in Resources */,
+				C6624A392C48EC7A009F6079 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,8 +322,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B217B62A358CD100DB9AAD /* ComicsViewController.swift in Sources */,
+				C6624A332C48A412009F6079 /* ComicsPageViewController.swift in Sources */,
+				C6B217B62A358CD100DB9AAD /* ComicsCollectionViewController.swift in Sources */,
 				C69157282B3E991C0078B9FA /* ComicShop.swift in Sources */,
+				C6624A352C48A4D3009F6079 /* ComicPageViewController.swift in Sources */,
 				C636A89B2A5C2E1200C20048 /* ComicContentView.swift in Sources */,
 				C6B217B22A358CD100DB9AAD /* AppDelegate.swift in Sources */,
 				C6F5EAF62B44914B00965ED6 /* Globals.swift in Sources */,
@@ -351,25 +367,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		C6B217B72A358CD100DB9AAD /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C6B217B82A358CD100DB9AAD /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		C6B217BF2A358CD200DB9AAD /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C6B217C02A358CD200DB9AAD /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		C6B217D92A358CD200DB9AAD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -407,6 +404,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -467,6 +465,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -666,12 +665,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C636A8912A5C159400C20048 /* Realm */ = {
+		C6624A3B2C48ED5F009F6079 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C636A8902A5C159400C20048 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		C636A8932A5C159400C20048 /* RealmSwift */ = {
+		C6624A3D2C48ED5F009F6079 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C636A8902A5C159400C20048 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;

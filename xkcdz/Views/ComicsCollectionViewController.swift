@@ -1,0 +1,124 @@
+//
+//  ViewController.swift
+//  xkcdz
+//
+//  Created by Adin W-T on 6/11/23.
+//
+
+import UIKit
+import RealmSwift
+
+@MainActor
+class ComicsCollectionViewController: UICollectionViewController {
+    typealias DataSource = UICollectionViewDiffableDataSource<Int, Int>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Int>
+    
+    private var realm: Realm!
+    private var dataSource: DataSource!
+    private var comicMetas: Results<ComicMeta>!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let cellRegistration = UICollectionView.CellRegistration<ComicCollectionViewCell, Int>(handler: registrationHandler)
+        
+        realm = try! Realm(configuration: XKCDZ_SHARED_REALM_CONFIG)
+        comicMetas = realm.objects(ComicMeta.self).sorted(by: \.id)
+        dataSource = DataSource(collectionView: collectionView) {
+            (collectionView: UICollectionView, indexPath: IndexPath, itemIdentifier: Int) in
+            
+            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        }
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 200, height: 200)
+        collectionView.collectionViewLayout = layout
+        
+        applyInitialSnapshot()
+    }
+    
+    func applyInitialSnapshot() {
+        Task { [weak self] in
+            var snapshot = Snapshot()
+            do {
+                try await ComicShop.shared.downloadMeta() // Downloads latest meta
+            }
+            catch {
+                print(error)
+                fatalError("Goodbye")
+            }
+            self?.realm.refresh()
+            let latestMetaNum = self?.comicMetas.last?.id ?? 1
+            print(latestMetaNum)
+            
+            snapshot.appendSections([0])
+            snapshot.appendItems(Array(stride(from: latestMetaNum, to: 0, by: -1)), toSection: 0)
+            
+            if let self = self {
+                await dataSource.apply(snapshot)
+            }
+        }
+    }
+    
+//    func registrationHandler(cell: UICollectionViewCell, indexPath: IndexPath, item: Int) {
+//        Task { [weak self, weak cell] in
+//            guard let self = self else {return}
+//            
+//            let localCopy = comicMetas.where {
+//                $0.id == item
+//            }
+//            if localCopy.isEmpty {
+//                // TODO(Adin): Fetch
+//            }
+//            else {
+//                guard let cell = cell else {return}
+//                let image = UIImage(systemName: "circle.filled")!
+//                // TODO(Adin): Get image instead
+//                var configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
+//            }
+//        }
+//    }
+    
+    func registrationHandler(cell: UICollectionViewCell, indexPath: IndexPath, item: Int) {
+        Task { [weak self] in
+            
+            guard let cell = cell as? ComicCollectionViewCell else { return }
+            cell.comicId = item
+            let configuration = cell.getDefaultLoadingConfiguration(for: item)
+            cell.contentConfiguration = configuration
+
+            var imageData: Data? = nil
+            do {
+                imageData = try await ComicShop.shared.getLargestImage(for: item)
+            }
+            catch ComicShop.ComicShopDownloadError.HTTPResponseCodeError(let code) where code == 403 {
+                if cell.comicId == item {
+                    let image = UIImage(systemName: "exclamationmark.circle.fill")!
+                    let configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
+                    cell.contentConfiguration = configuration
+                }
+            }
+            catch {
+                print(error)
+                fatalError("Goodbye")
+            }
+            let image = (await UIImage(data: imageData!)?.byPreparingThumbnail(ofSize: CGSize(width: 300.0, height: 300.0)))!
+            
+            guard let _ = self else { return }
+            
+            if cell.comicId == item {
+                let configuration = ComicContentViewConfiguration(forNum: item, withImage: image)
+                cell.contentConfiguration = configuration
+            }
+        }
+    }
+}
+
+extension ComicsCollectionViewController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let comicsPageViewController = ComicsPageViewController(firstComic: dataSource.itemIdentifier(for: indexPath) ?? 1)
+        print("IndexPath Item: \(indexPath.item)")
+//        comicsPageViewController.modalPresentationStyle = .popover
+        navigationController?.pushViewController(comicsPageViewController, animated: true)
+    }
+}

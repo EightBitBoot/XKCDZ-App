@@ -19,11 +19,15 @@ class ComicMeta: Object, Identifiable, Decodable {
     
     @Persisted private(set) var date: Date
     
-    @Persisted private(set) var img: String
+    @Persisted private(set) var img: URL
     @Persisted private(set) var transcript: String
-    @Persisted private(set) var link: String
+    @Persisted private(set) var link: URL
     
     @Persisted private(set) var extraParts: ExtraParts?
+    
+    var navigationTitle: String {
+        "\(id): \(title)"
+    }
     
     enum CodingKeys: String, CodingKey {
         case id = "num"
@@ -43,16 +47,17 @@ class ComicMeta: Object, Identifiable, Decodable {
         case extraParts = "extra_parts"
     }
     
+    enum EnlargedImageState: Int, PersistableEnum {
+        case NotTried
+        case Returned404
+        case HasEnlarged
+    }
+    
     // {'month', 'extra_parts', 'day', 'transcript', 'safe_title', 'year', 'img', 'title', 'alt', 'num', 'news', 'link'}
     
+    // App crashes with EXC_BREAKPOINT exception in RealmSwift/SchemaDiscovery.swift:184
+    // if this is removed
     override init() {
-        if ComicMeta.initializerUsed {
-            fatalError("This initializer must only be called once by realm")
-        }
-        else {
-            ComicMeta.initializerUsed = true
-        }
-        
         super.init()
     }
     
@@ -77,9 +82,9 @@ class ComicMeta: Object, Identifiable, Decodable {
         dateComponents.timeZone = TimeZone.current
         date = Calendar(identifier: .gregorian).date(from: dateComponents) ?? Date(timeIntervalSince1970: .zero)
         
-        img = try values.decode(String.self, forKey: .img)
+        img = try URL(string: values.decode(String.self, forKey: .img)) ?? URL(filePath: "")
         transcript = try values.decode(String.self, forKey: .link)
-        link = try values.decode(String.self, forKey: .link)
+        link = try URL(string: values.decode(String.self, forKey: .link)) ?? URL(filePath: "")
         
         extraParts = try values.decodeIfPresent(ExtraParts.self, forKey: .extraParts)
     }
@@ -150,6 +155,25 @@ extension ComicMeta {
             pre = try values.decodeIfPresent(String.self, forKey: .pre)
             post = try values.decodeIfPresent(String.self, forKey: .post)
         }
+    }
+}
+
+//MARK: - Custom Convertable Types
+
+extension URL: FailableCustomPersistable {
+    public typealias PersistedType = String
+    
+    public init?(persistedValue: String) {
+        if persistedValue == "" {
+            self.init(filePath: "")
+        }
+        else {
+            self.init(string: persistedValue)
+        }
+    }
+    
+    public var persistableValue: String {
+        self.absoluteString
     }
 }
 
