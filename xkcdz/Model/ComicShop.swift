@@ -8,6 +8,7 @@
 import Foundation
 import Dispatch
 import RealmSwift
+import os
 
 // TODO(Adin): Convert realm to queue isolated realm and
 //             use withCheckedContinuation(block:) to
@@ -20,8 +21,14 @@ import RealmSwift
 // struct?
 actor ComicShop {
     static let shared: ComicShop = ComicShop()
+    static let logger: os.Logger = os.Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: ComicShop.self)
+    )
 
-    private init() {}
+    private init() {
+        Self.logger.info("Cache directory: \(ComicShop.CACHE_DIR_URL.absoluteString, privacy: .public)")
+    }
     
     // TODO(Adin): Make this more externally readable by creating a dedicated
     //             downloadLatestMeta() function?
@@ -67,11 +74,16 @@ actor ComicShop {
         }
         
         if let fileData = fileData {
-            print("Img Cache Hit: \(comicNum) \(size == .Large ? "large" : "standard") \(effectiveFilePath.lastPathComponent)")
+            Self.logger.debug("""
+                Img Cache Hit:
+                    comicNum=\(comicNum, privacy: .public)
+                    "size=\(size == .Large ? "large" : "standard", privacy: .public)
+                    "path=\(effectiveFilePath, privacy: .public)
+                """
+            )
             return fileData
         }
         
-        print("Img Cache Hit: \(comicNum) \(size == .Large ? "large" : "standard") \(effectiveFilePath.lastPathComponent)")
         
         // ---- Try downloading from url ----
         
@@ -87,9 +99,7 @@ actor ComicShop {
         let imgUrl = meta.img
         
         let imgName2x = meta.img.deletingPathExtension().lastPathComponent + "_2x." + meta.img.pathExtension
-        print(imgName2x)
         let imgUrl2x  = meta.img.deletingLastPathComponent().appendingPathComponent(imgName2x)
-        print(imgUrl2x)
         
         let effectiveUrl: URL
         switch(size) {
@@ -100,8 +110,16 @@ actor ComicShop {
             effectiveUrl = imgUrl2x
         }
         
+        Self.logger.debug("""
+            Img Cache Miss:
+                comicNum=\(comicNum, privacy: .public)
+                size=\((size == .Large ? "large" : "standard"), privacy: .public)
+                path=\(effectiveFilePath, privacy: .public)
+                url=\(effectiveUrl, privacy: .public)
+            """
+        )
+
         let downloadedData = try await downloadData(from: effectiveUrl)
-        print(effectiveFilePath.absoluteString)
         try downloadedData.write(to: effectiveFilePath)
         
         return downloadedData
@@ -109,12 +127,15 @@ actor ComicShop {
     
     func getLargestImage(for comicNum: Int) async throws -> Data {
         do {
+            Self.logger.debug("getLargestImage(for:) for comicNum=\(comicNum, privacy: .public) trying large")
             return try await getImage(for: comicNum, size: .Large)
         }
-        catch ComicShopDownloadError.HTTPResponseCodeError(let responseCode) where responseCode == 404 {} // GULP
+        catch ComicShopDownloadError.HTTPResponseCodeError(let responseCode) where responseCode == 404 {
+            // GULP
+        }
         
-        print("Trying smaller")
-        
+        Self.logger.debug("getLargestImage(for:) for comicNum=\(comicNum, privacy: .public) trying standard")
+
         // Retry with smaller image size
         return try await getImage(for: comicNum, size: .Standard)
     }

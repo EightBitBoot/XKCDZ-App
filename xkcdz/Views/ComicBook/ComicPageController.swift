@@ -19,7 +19,6 @@ class ComicPageController: UIViewController {
     
     init(for meta: ComicMeta) {
         self.meta = meta
-        print("ComicPageViewController init for: \(meta.id)")
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -73,20 +72,16 @@ class ComicPageController: UIViewController {
                 fatalError("Goodbye")
             }
             
-//            print("Data Size: \(imageData.count)")
             let image = UIImage(data: imageData)!
             imageView.image = await image.byPreparingForDisplay()
             
             activityIndicator.stopAnimating()
             scrollView.isScrollEnabled = true
             scrollView.isHidden = false
-            
-//            print("Done: \(meta.id)")
         }
     }
     
     @objc func showAltPopup() {
-        print("ShowAltPopup")
         let alertController = UIAlertController(title: "Alt", message: meta.alt, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Ok", style: .default))
         present(alertController, animated: true)

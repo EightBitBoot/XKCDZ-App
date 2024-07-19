@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import os
 
 @MainActor
 class ComicShelfController: UICollectionViewController {
@@ -18,6 +19,11 @@ class ComicShelfController: UICollectionViewController {
     private var comicMetas: Results<ComicMeta>!
     
     private var refreshControl: UIRefreshControl!
+    
+    private static let logger: os.Logger = os.Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(String(describing: ComicShelfController.self))
+    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,7 +104,7 @@ extension ComicShelfController {
             }
             self?.realm.refresh()
             let latestMetaNum = self?.comicMetas.last?.id ?? 1
-            print(latestMetaNum)
+            Self.logger.info("Applying initial snapshot with latestMetaNum=\(latestMetaNum, privacy: .public)")
             
             snapshot.appendSections([0])
             snapshot.appendItems(Array(stride(from: latestMetaNum, to: 0, by: -1)), toSection: 0)
@@ -142,8 +148,11 @@ extension ComicShelfController {
 
 extension ComicShelfController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let comicsPageViewController = ComicBookController(firstComic: dataSource.itemIdentifier(for: indexPath) ?? 1)
-        print("IndexPath Item: \(indexPath.item)")
+        let itemNum: Int? = dataSource.itemIdentifier(for: indexPath)
+        
+        Self.logger.debug("collectionView(_:didSelectItemAt:) for indexPath \(indexPath, privacy: .public) (item \(itemNum ?? -1, privacy: .public)")
+        
+        let comicsPageViewController = ComicBookController(firstComic: itemNum ?? 1)
         navigationController?.pushViewController(comicsPageViewController, animated: true)
     }
 }

@@ -92,6 +92,7 @@ class ComicMeta: Object, Identifiable, Decodable {
 
 #if DEBUG
 extension ComicMeta {
+    // TODO(Adin): Convert to os.Logger.debug(_:)?
     func dump() {
         print("ComicMeta:")
         print("     id: \(id)")
