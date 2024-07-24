@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreImage
 
 // TODO(Adin): Bump realm-swift package dependency version to
 //             (at least) 10.49.3 and change the versioning
@@ -20,6 +21,7 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        g_xkcdzCoreImageContext = CIContext()
         return true
     }
 

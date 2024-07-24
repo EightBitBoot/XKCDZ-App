@@ -14,7 +14,7 @@ import UIKit
 class ComicPageController: UIViewController {
     let meta: ComicMeta
     private var activityIndicator: UIActivityIndicatorView!
-    private var imageView: UIImageView!
+    private var comicPaneView: ComicPaneView!
     private var scrollView: UIScrollView!
     
     init(for meta: ComicMeta) {
@@ -47,10 +47,10 @@ class ComicPageController: UIViewController {
         scrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(scrollView)
         
-        imageView = UIImageView(frame: scrollView.bounds)
-        imageView.contentMode = .scaleAspectFit
-        imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        scrollView.addSubview(imageView)
+        comicPaneView = ComicPaneView(frame: scrollView.bounds)
+        comicPaneView.contentMode = .scaleAspectFit
+        comicPaneView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        scrollView.addSubview(comicPaneView)
         
         activityIndicator = UIActivityIndicatorView()
         activityIndicator.hidesWhenStopped = true
@@ -72,9 +72,9 @@ class ComicPageController: UIViewController {
                 fatalError("Goodbye")
             }
             
-            let image = UIImage(data: imageData)!
-            imageView.image = await image.byPreparingForDisplay()
-            
+//            comicPaneView.comicImage = await (UIImage(data: imageData)!.byPreparingForDisplay())!
+            comicPaneView.comicImage = UIImage(data: imageData)
+
             activityIndicator.stopAnimating()
             scrollView.isScrollEnabled = true
             scrollView.isHidden = false
@@ -90,6 +90,6 @@ class ComicPageController: UIViewController {
 
 extension ComicPageController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
+        return comicPaneView
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C6021F6D2C4B81920016FE46 /* ComicPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6021F6C2C4B81920016FE46 /* ComicPaneView.swift */; };
 		C636A88E2A54E15100C20048 /* ContextMenuTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */; };
 		C636A89B2A5C2E1200C20048 /* ComicShelfCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C636A89A2A5C2E1200C20048 /* ComicShelfCell.swift */; };
 		C6624A332C48A412009F6079 /* ComicBookController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6624A322C48A412009F6079 /* ComicBookController.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C6021F6C2C4B81920016FE46 /* ComicPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicPaneView.swift; sourceTree = "<group>"; };
 		C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuTestViewController.swift; sourceTree = "<group>"; };
 		C636A89A2A5C2E1200C20048 /* ComicShelfCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicShelfCell.swift; sourceTree = "<group>"; };
 		C6624A322C48A412009F6079 /* ComicBookController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicBookController.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				C63DB93C2C49BB2C0032FABB /* ComicBook */,
 				C636A8992A5C2DDC00C20048 /* ComicShelf */,
 				C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */,
+				C6021F6C2C4B81920016FE46 /* ComicPaneView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				C6B217B62A358CD100DB9AAD /* ComicShelfController.swift in Sources */,
 				C69157282B3E991C0078B9FA /* ComicShop.swift in Sources */,
 				C6624A352C48A4D3009F6079 /* ComicPageController.swift in Sources */,
+				C6021F6D2C4B81920016FE46 /* ComicPaneView.swift in Sources */,
 				C636A89B2A5C2E1200C20048 /* ComicShelfCell.swift in Sources */,
 				C6B217B22A358CD100DB9AAD /* AppDelegate.swift in Sources */,
 				C6F5EAF62B44914B00965ED6 /* Globals.swift in Sources */,
@@ -502,6 +506,7 @@
 				DEVELOPMENT_TEAM = L44FD3X8RT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = xkcdz/Info.plist;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -530,6 +535,7 @@
 				DEVELOPMENT_TEAM = L44FD3X8RT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = xkcdz/Info.plist;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

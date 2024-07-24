@@ -22,7 +22,7 @@ class ComicShelfCell: UICollectionViewCell {
 class ComicShelfContentView: UIView, UIContentView {
     private static let marginSize: CGFloat = 5.0
     
-    let imageView = UIImageView()
+    let imageView = ComicPaneView()
     let numberLabel = UILabel()
     let activityIndicator = UIActivityIndicatorView()
     
@@ -95,7 +95,7 @@ class ComicShelfContentView: UIView, UIContentView {
         }
         else {
             numberLabel.text = String(configuration.comicNum)
-            imageView.image = configuration.comicImage
+            imageView.comicImage = configuration.comicImage
             activityIndicator.stopAnimating()
             imageView.isHidden = false
         }
