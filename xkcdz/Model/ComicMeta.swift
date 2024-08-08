@@ -10,68 +10,68 @@ import RealmSwift
 
 class ComicMeta: Object, Identifiable, Decodable {
     private static var initializerUsed = false
-    
+
     @Persisted(primaryKey: true) private(set) var id: Int // "num" in Json
-    
+
     @Persisted private(set) var title: String
     @Persisted private(set) var safeTitle: String
     @Persisted private(set) var alt: String
-    
+
     @Persisted private(set) var date: Date
-    
+
     @Persisted private(set) var img: URL
     @Persisted private(set) var transcript: String
     @Persisted private(set) var link: URL
-    
+
     @Persisted private(set) var extraParts: ExtraParts?
-    
+
     var navigationTitle: String {
         "\(id): \(title)"
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case id = "num"
-        
+
         case title
         case safeTitle = "safe_title"
         case alt
-        
+
         case year
         case month
         case day
-        
+
         case img
         case transcript
         case link
-        
+
         case extraParts = "extra_parts"
     }
-    
+
     enum EnlargedImageState: Int, PersistableEnum {
         case NotTried
         case Returned404
         case HasEnlarged
     }
-    
+
     // {'month', 'extra_parts', 'day', 'transcript', 'safe_title', 'year', 'img', 'title', 'alt', 'num', 'news', 'link'}
-    
+
     // App crashes with EXC_BREAKPOINT exception in RealmSwift/SchemaDiscovery.swift:184
     // if this is removed
     override init() {
         super.init()
     }
-    
+
     required init(from decoder: Decoder) throws {
         super.init()
-        
+
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         id = try values.decode(Int.self, forKey: .id)
-        
+
         title = try values.decode(String.self, forKey: .title)
         safeTitle = try values.decode(String.self, forKey: .safeTitle)
         alt = try values.decode(String.self, forKey: .alt)
-        
+
         var dateComponents = DateComponents()
         dateComponents.year = try Int(values.decode(String.self, forKey: .year)) ?? 1970
         dateComponents.month = try Int(values.decode(String.self, forKey: .month)) ?? 1
@@ -81,11 +81,11 @@ class ComicMeta: Object, Identifiable, Decodable {
         dateComponents.second = 0
         dateComponents.timeZone = TimeZone.current
         date = Calendar(identifier: .gregorian).date(from: dateComponents) ?? Date(timeIntervalSince1970: .zero)
-        
+
         img = try URL(string: values.decode(String.self, forKey: .img)) ?? URL(filePath: "")
         transcript = try values.decode(String.self, forKey: .link)
         link = try URL(string: values.decode(String.self, forKey: .link)) ?? URL(filePath: "")
-        
+
         extraParts = try values.decodeIfPresent(ExtraParts.self, forKey: .extraParts)
     }
 }
@@ -115,7 +115,7 @@ extension ComicMeta {
     @objc(ExtraParts) // Required by realm because this isn't a public, top-level class
     class ExtraParts: EmbeddedObject, Decodable {
         static var initializerUsed = false
-        
+
         @Persisted var headerExtra: String?
         @Persisted var imgAttr: String?
         @Persisted var inset: String?
@@ -131,7 +131,7 @@ extension ComicMeta {
             case pre
             case post
         }
-        
+
         override init() {
             if ExtraParts.initializerUsed {
                 fatalError("This initializer is only to be called once by realm")
@@ -139,14 +139,14 @@ extension ComicMeta {
             else {
                 ExtraParts.initializerUsed = true
             }
-            
+
             super.init()
-            
+
         }
 
         required init(from decoder: Decoder) throws {
             super.init()
-            
+
             let values = try decoder.container(keyedBy: CodingKeys.self)
 
             headerExtra = try values.decodeIfPresent(String.self, forKey: .headerExtra)
@@ -163,7 +163,7 @@ extension ComicMeta {
 
 extension URL: FailableCustomPersistable {
     public typealias PersistedType = String
-    
+
     public init?(persistedValue: String) {
         if persistedValue == "" {
             self.init(filePath: "")
@@ -172,7 +172,7 @@ extension URL: FailableCustomPersistable {
             self.init(string: persistedValue)
         }
     }
-    
+
     public var persistableValue: String {
         self.absoluteString
     }

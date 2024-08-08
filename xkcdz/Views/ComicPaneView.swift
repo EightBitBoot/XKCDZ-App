@@ -17,16 +17,16 @@ class ComicPaneView: UIImageView {
                 image = newImage
                 return
             }
-            
+
             let filter = CIFilter.colorInvert()
             let inputImage = CIImage(cgImage: newImage.cgImage!)
             filter.setValue(inputImage, forKey: kCIInputImageKey)
             let outputImage = filter.outputImage!
             let cgImage = g_xkcdzCoreImageContext.createCGImage(outputImage, from: outputImage.extent)!
-            
+
             image = UIImage(cgImage: cgImage)
         }
-        
+
         get {
             return image
         }

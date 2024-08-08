@@ -29,7 +29,7 @@ actor ComicShop {
     private init() {
         Self.logger.info("Cache directory: \(ComicShop.CACHE_DIR_URL.absoluteString, privacy: .public)")
     }
-    
+
     // TODO(Adin): Make this more externally readable by creating a dedicated
     //             downloadLatestMeta() function?
     func downloadMeta(for comicNum: Int? = nil) async throws {
@@ -37,7 +37,7 @@ actor ComicShop {
         if comicNum != nil && realm.objects(ComicMeta.self).contains(where: {$0.id == comicNum}) {
             return
         }
-        
+
         let meta = try await downloadAndParseMeta(for: comicNum)
         if comicNum == nil && realm.objects(ComicMeta.self).contains(where: {$0.id == meta.id}) {
             return
@@ -46,23 +46,23 @@ actor ComicShop {
             realm.add(meta)
         }
     }
-    
+
     func getImage(for comicNum: Int, size: ImageSize = .Large) async throws -> Data {
         ensureCacheDir()
-        
+
         // ---- Try loading from filesystem ----
         let fileName   = String(describing: comicNum)
         let fileName2x = String(describing: comicNum) + "_2x"
-        
+
         let effectiveFilePath: URL
         switch(size) {
             case .Standard:
                 effectiveFilePath = ComicShop.CACHE_DIR_URL.appendingPathComponent(fileName)
-                
+
             case .Large:
                 effectiveFilePath = ComicShop.CACHE_DIR_URL.appendingPathComponent(fileName2x)
         }
-        
+
         var fileData: Data?
         do {
             fileData = try Data(contentsOf: effectiveFilePath)
@@ -72,7 +72,7 @@ actor ComicShop {
             //       all others should be passed up the stack)
             fileData = nil
         }
-        
+
         if let fileData = fileData {
             Self.logger.debug("""
                 Img Cache Hit:
@@ -83,10 +83,10 @@ actor ComicShop {
             )
             return fileData
         }
-        
-        
+
+
         // ---- Try downloading from url ----
-        
+
         let realm = try! await Realm(configuration: XKCDZ_SHARED_REALM_CONFIG, actor: self)
         if !realm.objects(ComicMeta.self).contains(where: { $0.id == comicNum}) {
             // Although downloadMeta(for:) checks whether the meta to download already exists,
@@ -95,21 +95,21 @@ actor ComicShop {
             try await downloadMeta(for: comicNum)
         }
         let meta = realm.objects(ComicMeta.self).first(where: { $0.id == comicNum})!
-        
+
         let imgUrl = meta.img
-        
+
         let imgName2x = meta.img.deletingPathExtension().lastPathComponent + "_2x." + meta.img.pathExtension
         let imgUrl2x  = meta.img.deletingLastPathComponent().appendingPathComponent(imgName2x)
-        
+
         let effectiveUrl: URL
         switch(size) {
         case .Standard:
             effectiveUrl = imgUrl
-            
+
         case .Large:
             effectiveUrl = imgUrl2x
         }
-        
+
         Self.logger.debug("""
             Img Cache Miss:
                 comicNum=\(comicNum, privacy: .public)
@@ -121,10 +121,10 @@ actor ComicShop {
 
         let downloadedData = try await downloadData(from: effectiveUrl)
         try downloadedData.write(to: effectiveFilePath)
-        
+
         return downloadedData
     }
-    
+
     func getLargestImage(for comicNum: Int) async throws -> Data {
         do {
             Self.logger.debug("getLargestImage(for:) for comicNum=\(comicNum, privacy: .public) trying large")
@@ -133,13 +133,13 @@ actor ComicShop {
         catch ComicShopDownloadError.HTTPResponseCodeError(let responseCode) where responseCode == 404 {
             // GULP
         }
-        
+
         Self.logger.debug("getLargestImage(for:) for comicNum=\(comicNum, privacy: .public) trying standard")
 
         // Retry with smaller image size
         return try await getImage(for: comicNum, size: .Standard)
     }
-    
+
     enum ImageSize {
         case Standard
         case Large
@@ -160,26 +160,26 @@ private extension ComicShop {
     static let XKCD_META_FILENAME: String = "info.0.json"
     static let XKCD_BASE_URL: URL = URL(string: "https://xkcd.com/")!
     static let XKCD_LATEST_META_URL: URL = XKCD_BASE_URL.appending(component: XKCD_META_FILENAME)
-    
+
     func downloadData(from url: URL) async throws -> Data {
         let (data, response): (Data, URLResponse) = try await URLSession.shared.data(from: url)
         guard let httpResponse = response as? HTTPURLResponse
         else {
             throw ComicShopDownloadError.InvalidResponseTypeError
         }
-        
+
         switch httpResponse.statusCode {
             case 200...299:
                 // Success
                 break
-                
+
             default:
                 throw ComicShopDownloadError.HTTPResponseCodeError(httpResponse.statusCode)
         }
-            
+
         return data
     }
-    
+
     func downloadAndParseMeta(for comicNum: Int? = nil) async throws -> ComicMeta {
         // By default, download the latest meta if no comic num is provided
         var metaUrl: URL = ComicShop.XKCD_LATEST_META_URL
@@ -187,10 +187,10 @@ private extension ComicShop {
             if comicNum < 1 {
                 throw ComicShopDownloadError.InvalidComicNum(comicNum)
             }
-            
+
             metaUrl = ComicShop.XKCD_BASE_URL.appendingPathComponent(String(comicNum)).appendingPathComponent(ComicShop.XKCD_META_FILENAME)
         }
-        
+
         let data = try await downloadData(from: metaUrl)
         return try JSONDecoder().decode(ComicMeta.self, from: data)
     }
@@ -205,9 +205,9 @@ private extension ComicShop {
         appropriateFor: nil,
         create: false
     ).appendingPathComponent("XKCDZ")
-    
+
     static let IMAGES_CACHE_DIR = CACHE_DIR_URL.appendingPathComponent("imgs")
-    
+
     func ensureCacheDir() {
         var isDir: ObjCBool = false
         if !FileManager.default.fileExists(atPath: ComicShop.CACHE_DIR_URL.path, isDirectory: &isDir) {
