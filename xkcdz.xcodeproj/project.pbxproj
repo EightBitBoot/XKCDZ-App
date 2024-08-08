@@ -25,6 +25,7 @@
 		C6B217CC2A358CD200DB9AAD /* ComicShopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217CB2A358CD200DB9AAD /* ComicShopTests.swift */; };
 		C6B217D62A358CD200DB9AAD /* xkcdzUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217D52A358CD200DB9AAD /* xkcdzUITests.swift */; };
 		C6B217D82A358CD200DB9AAD /* xkcdzUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B217D72A358CD200DB9AAD /* xkcdzUITestsLaunchTests.swift */; };
+		C6BF14022C647ABA004805EA /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BF14012C647ABA004805EA /* CustomNavigationController.swift */; };
 		C6F5EAF62B44914B00965ED6 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F5EAF52B44914B00965ED6 /* Globals.swift */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,7 @@
 		C6B217D12A358CD200DB9AAD /* xkcdzUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = xkcdzUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6B217D52A358CD200DB9AAD /* xkcdzUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = xkcdzUITests.swift; sourceTree = "<group>"; };
 		C6B217D72A358CD200DB9AAD /* xkcdzUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = xkcdzUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C6BF14012C647ABA004805EA /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
 		C6F5EAF52B44914B00965ED6 /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,6 +105,7 @@
 				C636A8992A5C2DDC00C20048 /* ComicShelf */,
 				C636A88D2A54E15100C20048 /* ContextMenuTestViewController.swift */,
 				C6021F6C2C4B81920016FE46 /* ComicPaneView.swift */,
+				C6BF14012C647ABA004805EA /* CustomNavigationController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6624A332C48A412009F6079 /* ComicBookController.swift in Sources */,
+				C6BF14022C647ABA004805EA /* CustomNavigationController.swift in Sources */,
 				C6B217B62A358CD100DB9AAD /* ComicShelfController.swift in Sources */,
 				C69157282B3E991C0078B9FA /* ComicShop.swift in Sources */,
 				C6624A352C48A4D3009F6079 /* ComicPageController.swift in Sources */,
