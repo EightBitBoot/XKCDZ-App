@@ -49,7 +49,6 @@ class ComicBookController: UIPageViewController {
         setViewControllers([firstView], direction: .forward, animated: false)
 
         title = meta.navigationTitle
-        self.navigationItem.backButtonDisplayMode = .minimal
         self.navigationItem.largeTitleDisplayMode = .always
 
         toggleBarsGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(toggleBars))

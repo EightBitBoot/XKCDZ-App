@@ -49,6 +49,7 @@ class ComicShelfController: UICollectionViewController {
         collectionView.refreshControl = refreshControl
 
         self.navigationItem.backButtonTitle = "Comics"
+        self.navigationItem.backButtonDisplayMode = .minimal
 
         applyInitialSnapshot()
     }
